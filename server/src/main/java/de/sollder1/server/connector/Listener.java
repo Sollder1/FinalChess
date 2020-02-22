@@ -1,10 +1,16 @@
 package de.sollder1.server.connector;
 
 
-import de.hskl.beei0004.common.util.Logger;
 
+import de.sollder1.common.parsing.OwnParser;
+import de.sollder1.common.util.Logger;
+import de.sollder1.server.message.MessageInterpreter;
+
+import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.SocketException;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -48,7 +54,42 @@ public class Listener {
 
         while (run) {
 
+            try {
+                byte[] receivedData = new byte[1024];
 
+                DatagramPacket input = new DatagramPacket(receivedData, receivedData.length);
+                socket.receive(input);
+                String message = new String(input.getData(), StandardCharsets.UTF_16).trim();
+
+                //Startet für jede eingehende Nachricht einen Seperaten Thread
+                service.submit(() -> {
+
+                    try {
+                        String ip = input.getAddress().getHostAddress();
+                        InetAddress ipAdress = InetAddress.getByName(ip);
+
+                        MessageInterpreter interpreter = new MessageInterpreter();
+
+                        String reply = interpreter.parse(ipAdress, message, new OwnParser());
+
+                        byte[] sendData = reply.getBytes(StandardCharsets.UTF_16);
+                        DatagramPacket output = new DatagramPacket(sendData, sendData.length, ipAdress, input.getPort());
+
+                        socket.send(output);
+
+                        //interpreter.flushMessages();
+                    } catch (Exception e) {
+                        Logger.logE(e);
+                    }
+
+                });
+
+                //Workaround für mein Lokales netzt das aus irgendeienm Grund DNS NAmen vergibt...
+
+
+            } catch (Exception e) {
+                Logger.logE(e);
+            }
 
         }
 

@@ -12,11 +12,9 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>client</module>
         <module>common</module>
         <module>server</module>
-        <module>OldEngine</module>
-        <module>oldengine</module>
+        <module>client</module>
     </modules>
 
 </project>

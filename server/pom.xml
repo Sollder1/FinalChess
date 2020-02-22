@@ -10,11 +10,12 @@
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>server</artifactId>
-    <name>de.sollder1.server</name>
+    <name>server</name>
+    <version>1.0-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
-            <groupId>de.hskl.beei0004</groupId>
+            <groupId>de.sollder1</groupId>
             <artifactId>common</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
