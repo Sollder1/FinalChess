@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.paint.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.shape.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.sollder1.chess.game.gui.controller.mainController">
+   <children>
+      <Pane layoutX="23.0" layoutY="25.0" prefHeight="650.0" prefWidth="500.0" style="-fx-border-color: black;">
+         <children>
+            <Label fx:id="roundLabel" layoutX="14.0" layoutY="14.0" text="Spieler 1: Schwarz">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+            <TilePane fx:id="graveyardWhite" layoutX="10.0" layoutY="435.0" prefHeight="202.0" prefRows="4" prefWidth="202.0" style="-fx-border-color: black;" />
+            <TilePane fx:id="graveyardBlack" layoutX="284.0" layoutY="435.0" prefHeight="202.0" prefWidth="202.0" style="-fx-border-color: black;" />
+            <Button layoutX="14.0" layoutY="394.0" mnemonicParsing="false" text="Nächste Runde" />
+         </children>
+      </Pane>
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="600.0" layoutX="550.0" layoutY="50.0" stroke="BLACK" strokeType="INSIDE" width="600.0" />
+      <VBox alignment="TOP_CENTER" layoutX="1155.0" layoutY="50.0" prefHeight="600.0" prefWidth="30.0" spacing="40.0" style="-fx-border-color: black;">
+         <children>
+            <Label text="1">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <Label text="2">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <Label text="3">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <Label text="4">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <Label text="5">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <Label text="6">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <Label text="7">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <Label text="8">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+         </children>
+         <padding>
+            <Insets top="20.0" />
+         </padding>
+      </VBox>
+      <HBox layoutX="550.0" layoutY="657.0" prefHeight="0.0" prefWidth="600.0" spacing="50.0" style="-fx-border-color: black;">
+         <children>
+            <Label alignment="CENTER" prefWidth="25.0" text="A">
+               <font>
+                  <Font size="24.0" />
+               </font>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </Label>
+            <Label alignment="CENTER" prefWidth="25.0" text="B">
+               <font>
+                  <Font size="24.0" />
+               </font>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </Label>
+            <Label alignment="CENTER" prefWidth="25.0" text="C">
+               <font>
+                  <Font size="24.0" />
+               </font>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </Label>
+            <Label alignment="CENTER" prefWidth="25.0" text="D">
+               <font>
+                  <Font size="24.0" />
+               </font>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </Label>
+            <Label alignment="CENTER" prefWidth="25.0" text="E">
+               <font>
+                  <Font size="24.0" />
+               </font>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </Label>
+            <Label alignment="CENTER" prefWidth="25.0" text="F">
+               <font>
+                  <Font size="24.0" />
+               </font>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </Label>
+            <Label alignment="CENTER" prefWidth="25.0" text="G">
+               <font>
+                  <Font size="24.0" />
+               </font>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </Label>
+            <Label alignment="CENTER" prefWidth="25.0" text="H">
+               <font>
+                  <Font size="24.0" />
+               </font>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </Label>
+         </children>
+         <padding>
+            <Insets left="25.0" />
+         </padding>
+      </HBox>
+   </children>
+</Pane>

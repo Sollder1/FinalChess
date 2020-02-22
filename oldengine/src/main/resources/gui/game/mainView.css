@@ -1,0 +1,29 @@
+#tiles{
+	
+	-fx-background-radius: 0;
+
+}
+
+#tiles:hover { 
+	
+   -fx-opacity: 0.8;
+    
+}
+
+#tiles:pressed{
+	
+    -fx-opacity: 0.8;
+}
+
+#tiles:focused {
+	
+	-fx-border-width: 2;
+	-fx-border-color: gray;
+	
+}
+
+#figure{
+	
+	-fx-background-color: Transparent;
+	
+}
