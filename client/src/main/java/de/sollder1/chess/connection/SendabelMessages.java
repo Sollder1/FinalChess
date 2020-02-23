@@ -1,5 +1,7 @@
 package de.sollder1.chess.connection;
 
+import de.sollder1.chess.starter.gui.ConnectionColor;
+import de.sollder1.chess.starter.gui.ServerBrowserController;
 import de.sollder1.common.parsing.OwnParser;
 import de.sollder1.common.util.Logger;
 
@@ -7,22 +9,25 @@ public class SendabelMessages {
 
     private static final String SERVER_NOT_REACHABLE = "SERVER_NOT_REACHABLE";
 
-    public static boolean login (String clientport, String username){
+    public static void login (int clientport, String username){
 
-        int parsedPort;
-
-        try{
-            parsedPort = Integer.parseInt(clientport);
-        }catch (Exception e){
-            Logger.logE(e);
-            return false;
-        }
-
-        String reply = Sender.sendMessage("login;" + parsedPort + ":" + username);
-
-        return MessageInterpreterReply.parse(reply, new OwnParser());
-
+        String reply = Sender.sendMessage("login;" + clientport + ":" + username);
+        MessageInterpreterReply.parse(reply, new OwnParser());
 
     }
 
+    public static void currentGames (){
+
+        String reply = Sender.sendMessage("currentGames;");
+        MessageInterpreterReply.parse(reply, new OwnParser());
+
+    }
+
+
+    public static void createGame(String gameName, String clientId) {
+
+        String reply = Sender.sendMessage("createGame;" + gameName + ":" + clientId);
+        MessageInterpreterReply.parse(reply, new OwnParser());
+
+    }
 }

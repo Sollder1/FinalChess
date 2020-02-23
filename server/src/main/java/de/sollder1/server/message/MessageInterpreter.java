@@ -4,12 +4,15 @@ import de.sollder1.common.parsing.ParsedMessage;
 import de.sollder1.common.parsing.Parser;
 import de.sollder1.common.util.Logger;
 import de.sollder1.server.Server;
+import de.sollder1.server.game.Game;
+import de.sollder1.server.game.GameManager;
 import de.sollder1.server.user.User;
 import de.sollder1.server.user.UserManager;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class MessageInterpreter {
 
@@ -69,6 +72,10 @@ public class MessageInterpreter {
 
             case "login":
                 return login(parsedMessage);
+            case "currentGames":
+                return currentGames(parsedMessage);
+            case "createGame":
+                return createGame(parsedMessage);
             default:
                 return "invalid;";
 
@@ -77,16 +84,45 @@ public class MessageInterpreter {
 
     }
 
+    private String createGame(ParsedMessage parsedMessage) {
+
+        Optional<User> user = UserManager.getUser(parsedMessage.getDataFields()[1]);
+
+        if(user.isPresent()){
+            Optional<Game> game = GameManager.addGame(parsedMessage.getDataFields()[0], user.get());
+
+            return game.map(value -> "createGame_Success;" + value.getGameId())
+                    .orElse("createGame_Failure;NoGameSpaceLeft");
+
+        }else {
+            return "createGame_Failure;NoSuchClientId";
+        }
+
+    }
+
+    private String currentGames(ParsedMessage parsedMessage) {
+
+        List<Game> currentGames = GameManager.getGameList();
+        StringBuilder reply = new StringBuilder("currentGames_Success;");
+
+        for (Game game : currentGames) {
+            reply.append(game.marshal()).append(":");
+        }
+
+        return reply.toString();
+
+    }
+
     private String login(ParsedMessage parsedMessage) {
         System.err.println(parsedMessage.toString());
-        try{
+        try {
             User user = UserManager.addUser(parsedMessage.getDataFields()[1],
                     Integer.parseInt(parsedMessage.getDataFields()[0]),
                     parsedMessage.getIp());
 
-            return "login_Success;" + user.getClientId() + ":" + Server.MAX_PLAYERS;
+            return "login_Success;" + user.getClientId() + ":" + GameManager.MAX_GAMES;
 
-        }catch (Exception e){
+        } catch (Exception e) {
             Logger.logE(e);
             return "login_Failure;";
         }

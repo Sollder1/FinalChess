@@ -1,29 +1,38 @@
 package de.sollder1.chess.starter.gui;
 
-import de.sollder1.chess.connection.MessageInterpreterReply;
 import de.sollder1.chess.connection.SendabelMessages;
 import de.sollder1.chess.connection.Sender;
+import de.sollder1.common.util.Logger;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.Circle;
+import javafx.stage.Popup;
+import javafx.stage.Stage;
 
 import java.net.InetAddress;
 import java.net.URL;
-import java.net.UnknownHostException;
+import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ServerBrowserController implements Initializable {
 
 
+    private static ServerBrowserController controllerInstance;
+
     @FXML
-    TableView<GameListItem> gameTable;
+    TableView<GameItem> gameTable;
 
     @FXML
     TextField serverAddressTextField;
@@ -43,29 +52,28 @@ public class ServerBrowserController implements Initializable {
 
     @FXML
     ProgressIndicator loadingBar;
+    @FXML
+    Label connectionLabel;
+    @FXML
+    Circle connectionIndicator;
 
 
-    private final ObservableList<GameListItem> tableData = FXCollections.observableArrayList();
+    private final ObservableList<GameItem> currentGames = FXCollections.observableArrayList();
 
     private ExecutorService service = Executors.newFixedThreadPool(1);
+
+    private ServerSession serverSession = new ServerSession();
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
         loadingBar.setVisible(false);
+        controllerInstance = this;
 
-        MessageInterpreterReply.init(this);
-
-        tableData.addAll(
-                new GameListItem("The Game!", "1 / 2", "Nein"),
-                new GameListItem("Not the Game!", "2 / 2", "Ja")
-        );
-
-
-        TableColumn<GameListItem, String> gameName = new TableColumn<>("Spielname");
-        TableColumn<GameListItem, String> playerCount = new TableColumn("Spieleranzahl");
-        TableColumn<GameListItem, String> isRunning = new TableColumn("Läuft bereits");
+        TableColumn<GameItem, String> gameName = new TableColumn<>("Spielname");
+        TableColumn<GameItem, String> playerCount = new TableColumn("Spieleranzahl");
+        TableColumn<GameItem, String> isRunning = new TableColumn("Läuft bereits");
 
 
         gameName.prefWidthProperty().bind(gameTable.widthProperty().multiply(0.33));
@@ -83,12 +91,12 @@ public class ServerBrowserController implements Initializable {
         );
 
         gameTable.getColumns().addAll(gameName, playerCount, isRunning);
-        gameTable.setItems(tableData);
+        gameTable.setItems(currentGames);
 
     }
 
     //Ergebnis muss nciht durchgereicht werden, im Fehlerfall wird dem CLinet das einfach kenntlich gemnacht!
-    private synchronized void startUITask(Callable<Boolean> task){
+    private synchronized void startUITask(Runnable task) {
 
         connectButton.setDisable(true);
         newGameButton.setDisable(true);
@@ -96,41 +104,67 @@ public class ServerBrowserController implements Initializable {
         loadingBar.setVisible(true);
 
         service.submit(() -> {
-            boolean success = false;
-            try {
-                success = task.call();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            task.run();
+
             connectButton.setDisable(false);
             newGameButton.setDisable(false);
             refreshButton.setDisable(false);
             loadingBar.setVisible(false);
-
-            return success;
         });
 
     }
 
     public void connectButtonAction(ActionEvent event) {
 
-        try {
-            Sender.init(InetAddress.getByName(serverAddressTextField.getText()), 1998);
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
+        if (!serverSession.isLoggedIn()) {
+            int clientport;
+
+            try {
+                Sender.init(InetAddress.getByName(serverAddressTextField.getText()), 1998);
+                //Listener.init
+                clientport = Integer.parseInt(serverPortTextField.getText());
+            } catch (Exception e) {
+                Logger.logE(e);
+                ServerBrowserController.setConnectionState("Eingaben inkorrekt", ConnectionColor.YELLOW);
+                return;
+            }
+
+            startUITask(() -> SendabelMessages.login(clientport, userNameTextField.getText()));
         }
-
-        startUITask(()->SendabelMessages.login(serverPortTextField.getText(), userNameTextField.getText()));
-
 
     }
 
     public void createGameButtonAction(ActionEvent event) {
 
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Neues Spiel erstellen");
+        dialog.setHeaderText("Neues Spiel erstellen");
+        dialog.setContentText("Name des Spiels: ");
+
+        Optional<String> result = dialog.showAndWait();
+
+        result.ifPresent(s -> startUITask(() -> SendabelMessages.createGame(s, serverSession.getClientId())));
+
     }
 
     public void refreshButton(ActionEvent event) {
+        startUITask(SendabelMessages::currentGames);
+    }
 
+    public static void setConnectionState(String connectionState, ConnectionColor color) {
+        Platform.runLater(() -> {
+            controllerInstance.connectionLabel.setText(connectionState);
+            controllerInstance.connectionIndicator.setFill(Paint.valueOf(color.toString()));
+        });
+    }
+
+    public static void setServerSession(ServerSession serverSession) {
+        controllerInstance.serverSession = serverSession;
+    }
+
+    public static void setCurrentGames(List<GameItem> currentGames) {
+        controllerInstance.currentGames.clear();
+        controllerInstance.currentGames.addAll(currentGames);
     }
 
 }

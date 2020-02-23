@@ -36,7 +36,7 @@
    <center>
       <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <top>
-            <HBox alignment="CENTER_LEFT" prefHeight="53.0" prefWidth="600.0" spacing="25.0" BorderPane.alignment="CENTER">
+            <HBox alignment="CENTER_LEFT" prefHeight="53.0" prefWidth="600.0" BorderPane.alignment="CENTER">
                <BorderPane.margin>
                   <Insets bottom="20.0" />
                </BorderPane.margin>
@@ -46,16 +46,22 @@
                         <Font size="18.0" />
                      </font>
                   </Label>
-                  <Button fx:id="newGameButton" mnemonicParsing="false" onAction="#createGameButtonAction" text="Neues Spiel erstellen" />
-                  <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshButton" text="Aktualisieren" />
-                  <Circle fill="#c3c5c6" radius="10.0" stroke="BLACK" strokeType="INSIDE">
+                  <Button fx:id="newGameButton" mnemonicParsing="false" onAction="#createGameButtonAction" text="Neues Spiel erstellen">
                      <HBox.margin>
-                        <Insets left="25.0" />
+                        <Insets left="10.0" />
+                     </HBox.margin></Button>
+                  <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshButton" text="Aktualisieren">
+                     <HBox.margin>
+                        <Insets left="20.0" />
+                     </HBox.margin></Button>
+                  <Circle fx:id="connectionIndicator" fill="#c3c5c6" radius="10.0" stroke="BLACK" strokeType="INSIDE">
+                     <HBox.margin>
+                        <Insets left="20.0" />
                      </HBox.margin>
                   </Circle>
-                  <Label text="Nicht verbunden">
+                  <Label fx:id="connectionLabel" text="Nicht verbunden">
                      <HBox.margin>
-                        <Insets left="2.0" />
+                        <Insets left="5.0" />
                      </HBox.margin>
                   </Label>
                </children>

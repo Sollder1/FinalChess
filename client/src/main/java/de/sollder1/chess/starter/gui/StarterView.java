@@ -67,6 +67,11 @@ public class StarterView extends Application {
 
         });
 
+        mainStage.setOnCloseRequest(event -> {
+            System.exit(1);
+            //TODO: Logout
+        });
+
         Button settings = buildMenuButton("Einstellungen");
         settings.setOnAction( event -> {
             Alert a = new Alert(Alert.AlertType.INFORMATION, "No Settings YET!");

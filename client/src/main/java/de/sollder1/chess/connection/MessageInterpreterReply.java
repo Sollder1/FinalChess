@@ -1,19 +1,18 @@
 package de.sollder1.chess.connection;
 
+import de.sollder1.chess.starter.gui.GameItem;
+import de.sollder1.chess.starter.gui.ServerSession;
+import de.sollder1.chess.starter.gui.ConnectionColor;
 import de.sollder1.chess.starter.gui.ServerBrowserController;
 import de.sollder1.common.parsing.ParsedMessage;
 import de.sollder1.common.parsing.Parser;
 import de.sollder1.common.util.Logger;
 
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+
 public class MessageInterpreterReply {
-
-    private static ServerBrowserController serverBrowserController;
-
-    public static void init(ServerBrowserController serverBrowserController){
-        MessageInterpreterReply.serverBrowserController = serverBrowserController;
-    }
-
-
 
     /**
      * Versucht die gegebene Nachricht message zu parsen und schließlich zu interpretieren.
@@ -21,49 +20,90 @@ public class MessageInterpreterReply {
      * @param parser Die Parser Implementierung
      * @return
      */
-    public static boolean parse(String message, Parser parser){
+    public static void parse(String message, Parser parser){
 
         try{
-            interpret(parser.parseMessage(message));
+            interpret(parser.parseMessage(message), parser);
         }catch (Exception e){
             Logger.logE(e);
         }
 
-        return false;
     }
 
 
-    private static boolean interpret(ParsedMessage parsedMessage){
+    private static void interpret(ParsedMessage parsedMessage, Parser parser){
 
         Logger.logI(parsedMessage.toString());
+
+        if(parsedMessage.getCommand().equals("SERVER_NOT_REACHABLE")){
+            serverNotReachable();
+        }
 
         boolean success = parsedMessage.getCommand().split("_")[1].equals("Success");
         String type = parsedMessage.getCommand().split("_")[0];
 
         switch (type){
 
-            case "login" : return login(success);
+            case "login" : login(success, parsedMessage.getDataFields()); break;
+            case "currentGames" : currentGames(success, parsedMessage, parser); break;
+            case "createGame" : createGame(success, parsedMessage); break;
             //logoutSuccess
 
-            default: return false;
+            default: break;
 
         }
+
+    }
+
+    private static void createGame(boolean success, ParsedMessage parsedMessage) {
+
+        if(success){
+
+            //TODO: Hier geht man später direkt in den Multiplayer hinein!
+            SendabelMessages.currentGames();
+
+        }else {
+            Logger.logE("Error by Request 'createGame': " + parsedMessage.getDataFields()[0]);
+        }
+
+    }
+
+    private static void serverNotReachable() {
+
+        ServerBrowserController.setConnectionState("Server nicht erreichbar", ConnectionColor.RED);
 
     }
 
     /**
      * DIE HANDLERMETHODEN DÜRFEN KEINE WEITEREN AUFFRUFE MACHEN.
      */
-    private static boolean login(boolean success) {
+    private static void login(boolean success, String[] params) {
 
         if(success){
-            Logger.logI("Login success");
-            return true;
-        }else {
 
-            return false;
+            int maxGames = Integer.parseInt(params[1]);
+            ServerBrowserController.setConnectionState("Verbunden", ConnectionColor.GREEN);
+            ServerBrowserController.setServerSession(new ServerSession(params[0], maxGames));
+            SendabelMessages.currentGames();
+
+        }else {
+            ServerBrowserController.setConnectionState("Login nicht erfolgreich", ConnectionColor.YELLOW);
+            ServerBrowserController.setServerSession(new ServerSession());
         }
 
+    }
+
+    private static void currentGames(boolean success, ParsedMessage parsedMessage, Parser parser) {
+        if(success){
+            List<GameItem> gameItems = new ArrayList<>();
+            for (String field: parsedMessage.getDataFields()) {
+                gameItems.add(GameItem.parse(field));
+            }
+            ServerBrowserController.setCurrentGames(gameItems);
+
+        }else {
+
+        }
     }
 
 
