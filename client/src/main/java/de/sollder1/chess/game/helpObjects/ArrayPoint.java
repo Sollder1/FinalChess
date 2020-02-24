@@ -4,7 +4,7 @@ public class ArrayPoint {
 	
 	private int x;
 	private int y;
-	public String ColorOfTheTile = "green"; //Only for tiles
+	private String colorOfTheTile = "green"; //Only for tiles
 	  
 	public ArrayPoint(int x, int y){
 		  
@@ -17,7 +17,7 @@ public class ArrayPoint {
 		  
 		this.setX(x);
 		this.setY(y);
-		ColorOfTheTile = color;
+		colorOfTheTile = color;
 		  
 	}
 
@@ -36,7 +36,15 @@ public class ArrayPoint {
 	public void setY(int y) {
 		this.y = y;
 	}
-	
+
+	public String getColorOfTheTile() {
+		return colorOfTheTile;
+	}
+
+	public void setColorOfTheTile(String colorOfTheTile) {
+		this.colorOfTheTile = colorOfTheTile;
+	}
+
 	@Override
 	public String toString() {
 		

@@ -9,18 +9,26 @@ import de.sollder1.chess.game.chessfigures.Queen;
 import de.sollder1.chess.game.chessfigures.Rook;
 import de.sollder1.chess.game.gui.view.GameView;
 import de.sollder1.chess.game.helpObjects.Point;
-import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 
 public class ChessBoard extends Pane{
 	
-	public int size; //The Size of the Pane
-	
-	Button b = new Button();//Unused
-	
-	public Figure figuresOnTheField[][] = new Figure[8][8]; //[x][y]
-	public ChessBoardTile tiles [][]= new ChessBoardTile[8][8]; //[x][y]
-	
+	private int size; //The Size of the Pane
+	private Figure uiFigures[][] = new Figure[8][8]; //[x][y]
+	private ChessBoardTile tiles [][]= new ChessBoardTile[8][8]; //[x][y]
+
+	private static ChessBoard instance;
+
+	public static ChessBoard initInstance(int size){
+		if(instance == null){
+			ChessBoard.instance = new ChessBoard(size);
+			instance.fillBoardWithTiles();
+			instance.fillBoardWithFigures();
+		}
+
+		return instance;
+	}
+
 	//Size as var for heigth and width
 	public ChessBoard(int size){
 		
@@ -103,102 +111,92 @@ public class ChessBoard extends Pane{
 		//Pawns adden(black):
 		for(int i = 0; i< 8; i++) {
 				
-			figuresOnTheField[i][1] = new Pawn(size/8, i, new Point(i*(size/8), size/8), 1);
-			getChildren().add(figuresOnTheField[i][1]);
+			uiFigures[i][1] = new Pawn(size/8, i, new Point(i *(size/8), size/8), 1);
+			getChildren().add(uiFigures[i][1]);
 				
 		}
 		
 		//Pawns adden(white):
 		for(int i = 0; i< 8; i++) {
 			
-			figuresOnTheField[i][6] = new Pawn(size/8, i, new Point(i*(size/8), 6*(size/8)), 2);
-			getChildren().add(figuresOnTheField[i][6]);
+			uiFigures[i][6] = new Pawn(size/8, i, new Point(i*(size/8), 6*(size/8)), 2);
+			getChildren().add(uiFigures[i][6]);
 				
 		}
 
 		//Rooks adden(black):
-		figuresOnTheField[0][0] = new Rook(size/8, 1, new Point(0*(size/8), 0*(size/8)), 1);
-		getChildren().add(figuresOnTheField[0][0]);
-		figuresOnTheField[7][0] = new Rook(size/8, 1, new Point(7*(size/8), 0*(size/8)), 1);
-		getChildren().add(figuresOnTheField[7][0]);
+		uiFigures[0][0] = new Rook(size/8, 1, new Point(0*(size/8), 0*(size/8)), 1);
+		getChildren().add(uiFigures[0][0]);
+		uiFigures[7][0] = new Rook(size/8, 1, new Point(7*(size/8), 0*(size/8)), 1);
+		getChildren().add(uiFigures[7][0]);
 		
 		//Rooks adden(white):
-		figuresOnTheField[0][7] = new Rook(size/8, 1, new Point(0*(size/8), 7*(size/8)), 2);
-		getChildren().add(figuresOnTheField[0][7]);
-		figuresOnTheField[7][7] = new Rook(size/8, 1, new Point(7*(size/8), 7*(size/8)), 2);
-		getChildren().add(figuresOnTheField[7][7]);
+		uiFigures[0][7] = new Rook(size/8, 1, new Point(0*(size/8), 7*(size/8)), 2);
+		getChildren().add(uiFigures[0][7]);
+		uiFigures[7][7] = new Rook(size/8, 1, new Point(7*(size/8), 7*(size/8)), 2);
+		getChildren().add(uiFigures[7][7]);
 
 		
 		//Bishops adden(black):
-		figuresOnTheField[2][0] = new Bishop(size/8, 1, new Point(2*(size/8), 0*(size/8)), 1);
-		getChildren().add(figuresOnTheField[2][0]);
-		figuresOnTheField[5][0] = new Bishop(size/8, 1, new Point(5*(size/8), 0*(size/8)), 1);
-		getChildren().add(figuresOnTheField[5][0]);
+		uiFigures[2][0] = new Bishop(size/8, 1, new Point(2*(size/8), 0*(size/8)), 1);
+		getChildren().add(uiFigures[2][0]);
+		uiFigures[5][0] = new Bishop(size/8, 1, new Point(5*(size/8), 0*(size/8)), 1);
+		getChildren().add(uiFigures[5][0]);
 		
 		//Bishops adden(white):
-		figuresOnTheField[2][7] = new Bishop(size/8, 1, new Point(2*(size/8), 7*(size/8)), 2);
-		getChildren().add(figuresOnTheField[2][7]);
-		figuresOnTheField[5][7] = new Bishop(size/8, 1, new Point(5*(size/8), 7*(size/8)), 2);
-		getChildren().add(figuresOnTheField[5][7]);
+		uiFigures[2][7] = new Bishop(size/8, 1, new Point(2*(size/8), 7*(size/8)), 2);
+		getChildren().add(uiFigures[2][7]);
+		uiFigures[5][7] = new Bishop(size/8, 1, new Point(5*(size/8), 7*(size/8)), 2);
+		getChildren().add(uiFigures[5][7]);
 	
 		
 		//Knigths adden(black):
-		figuresOnTheField[1][0] = new Knigth(size/8, 1, new Point(1*(size/8), 0*(size/8)), 1);
-		getChildren().add(figuresOnTheField[1][0]);
-		figuresOnTheField[6][0] = new Knigth(size/8, 1, new Point(6*(size/8), 0*(size/8)), 1);
-		getChildren().add(figuresOnTheField[6][0]);
+		uiFigures[1][0] = new Knigth(size/8, 1, new Point(1*(size/8), 0*(size/8)), 1);
+		getChildren().add(uiFigures[1][0]);
+		uiFigures[6][0] = new Knigth(size/8, 1, new Point(6*(size/8), 0*(size/8)), 1);
+		getChildren().add(uiFigures[6][0]);
 		
 		//Knigths adden(white):
-		figuresOnTheField[1][7] = new Knigth(size/8, 1, new Point(1*(size/8), 7*(size/8)), 2);
-		getChildren().add(figuresOnTheField[1][7]);
-		figuresOnTheField[6][7] = new Knigth(size/8, 1, new Point(6*(size/8), 7*(size/8)), 2);
-		getChildren().add(figuresOnTheField[6][7]);
+		uiFigures[1][7] = new Knigth(size/8, 1, new Point(1*(size/8), 7*(size/8)), 2);
+		getChildren().add(uiFigures[1][7]);
+		uiFigures[6][7] = new Knigth(size/8, 1, new Point(6*(size/8), 7*(size/8)), 2);
+		getChildren().add(uiFigures[6][7]);
 		
 		
 		//Queen adden(black)
-		figuresOnTheField[3][0] = new Queen(size/8, 1, new Point(3*(size/8), 0*(size/8)), 1);
-		getChildren().add(figuresOnTheField[3][0]);
+		uiFigures[3][0] = new Queen(size/8, 1, new Point(3*(size/8), 0*(size/8)), 1);
+		getChildren().add(uiFigures[3][0]);
 		
 		
 		//Queen adden(white)
-		figuresOnTheField[3][7] = new Queen(size/8, 1, new Point(3*(size/8), 7*(size/8)), 2);
-		getChildren().add(figuresOnTheField[3][7]);
+		uiFigures[3][7] = new Queen(size/8, 1, new Point(3*(size/8), 7*(size/8)), 2);
+		getChildren().add(uiFigures[3][7]);
 		
 		
 		//King adden(black)
-		figuresOnTheField[4][0] = new King(size/8, 1, new Point(4*(size/8), 0*(size/8)), 1);
-		getChildren().add(figuresOnTheField[4][0]);
+		uiFigures[4][0] = new King(size/8, 1, new Point(4*(size/8), 0*(size/8)), 1);
+		getChildren().add(uiFigures[4][0]);
 		
 		
 		//King adden(white)
-		figuresOnTheField[4][7] = new King(size/8, 1, new Point(4*(size/8), 7*(size/8)), 2);
-		getChildren().add(figuresOnTheField[4][7]);
-		
-		
-		printField();
-		
+		uiFigures[4][7] = new King(size/8, 1, new Point(4*(size/8), 7*(size/8)), 2);
+		getChildren().add(uiFigures[4][7]);
+
 	}
 
-	//Helpful Method to Test the Array which represents 
-	//the Position of the Figures in the Data
-	public void printField() {
-
-		for(int i = 0; i<figuresOnTheField.length; i++) {
-			
-			for(int j = 0; j<figuresOnTheField[0].length; j++) {
-				
-				System.out.print(figuresOnTheField[j][i] + " ");
-				
-			}
-			
-			System.out.println();
-			
-		}
-		
-		System.out.println();
-		
+	public static ChessBoard getInstance() {
+		return instance;
 	}
-	
-	
-	
+
+	public int getSize() {
+		return size;
+	}
+
+	public Figure[][] getUiFigures() {
+		return uiFigures;
+	}
+
+	public ChessBoardTile[][] getTiles() {
+		return tiles;
+	}
 }

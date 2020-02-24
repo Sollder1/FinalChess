@@ -1,6 +1,5 @@
 package de.sollder1.chess.game.gui.view;
 
-//import application.Main;
 import de.sollder1.chess.game.Game;
 import de.sollder1.chess.starter.Starter;
 import javafx.application.Application;
@@ -11,8 +10,8 @@ import javafx.stage.Stage;
 import de.sollder1.chess.game.playground.ChessBoard;
 
 public class GameView extends Application{
-	
-	public static ChessBoard cb; //The Chessboard Class
+
+	public static final int SIZE = 600;
 	public static Pane mainPane; // The mainPane which gets initialized by the FXML-File
 	private String version;
 	
@@ -23,13 +22,8 @@ public class GameView extends Application{
 			//FXML File is getting loaded
 			FXMLLoader loader = new FXMLLoader(GameView.class.getResource("/gui/game/mainView.fxml"));
 			mainPane = loader.load();
-			
-			//Chessboard is getting inizialised
-			cb = new ChessBoard(600);
-			cb.fillBoardWithTiles();
-			cb.fillBoardWithFigures();
-			
-			mainPane.getChildren().add(cb); //Add Chessboard to Mainpane
+
+			mainPane.getChildren().add(ChessBoard.initInstance(SIZE)); //Add Chessboard to Mainpane
 		
 			Scene s = new Scene(mainPane); //Add Mainpaen to Scene
 		

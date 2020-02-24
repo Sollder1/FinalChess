@@ -1,45 +1,48 @@
 package de.sollder1.chess.game.chessfigures;
 
 
-import java.util.ArrayList;
 import java.util.List;
 
 import de.sollder1.chess.game.Game;
 import de.sollder1.chess.game.gui.view.GameView;
 import de.sollder1.chess.game.helpObjects.ArrayPoint;
 import de.sollder1.chess.game.helpObjects.Point;
+import de.sollder1.chess.game.playground.ChessBoard;
+import de.sollder1.chess.game.playground.ChessBoardTile;
+import de.sollder1.common.util.Logger;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.Region;
 
 public abstract class Figure extends Button {
 
-    Boolean locked = false;
-    Boolean death = false;
-    public int size;
-    public int player;
-
-    public int itemID;
-
-    public Figure figuresOnTheField[][];
+    private boolean locked = false;
+    protected int size;
+    protected int player;
+    protected int itemID;
 
     Point locationBeforeDragDrop;
-    Point locationBeforeDeath;
-
-    ArrayList<ArrayPoint> possibleCoordinates;
-
 
     //Player: 2: weißer pawn; 1: schwarzer pawn
     //Size as var for heigth and width
     //position The Position within the Pane
     public Figure(int size, int itemID, Point position, int player) {
 
+        if (player != 1 && player != 2) {
+            Logger.logE("Wrong playerId");
+            System.exit(-1);
+        }
+
+        setId("figure"); //CSS
+
+        setBackground(Background.EMPTY);
 
         locationBeforeDragDrop = position;
 
         setPrefSize(size, size);
-        setMinSize(Pane.USE_PREF_SIZE, Pane.USE_PREF_SIZE);
-        setMaxSize(Pane.USE_PREF_SIZE, Pane.USE_PREF_SIZE);
+        setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+        setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
 
         setLayoutX(position.getX());
         setLayoutY(position.getY());
@@ -48,12 +51,7 @@ public abstract class Figure extends Button {
         this.itemID = itemID;
         this.player = player;
 
-        figuresOnTheField = GameView.cb.figuresOnTheField;
-
-        dragDropActive();
-
-        //Move to Ecplicit Implementation(Pawn usw.)
-        setId("figure");
+        initDragAndDrop();
 
     }
 
@@ -61,21 +59,21 @@ public abstract class Figure extends Button {
     public void moveFigure(int x, int y) {
 
         locationBeforeDragDrop = new Point(this.getLayoutX(), this.getLayoutY());
-        GameView.cb.figuresOnTheField[(int) (locationBeforeDragDrop.getX() / size)][(int) (locationBeforeDragDrop.getY() / size)] = null;
+        ChessBoard.getInstance().getUiFigures()[(int) (locationBeforeDragDrop.getX() / size)][(int) (locationBeforeDragDrop.getY() / size)] = null;
 
 
-        setLayoutX(x * size);
-        setLayoutY(y * size);
+        setLayoutX((double) x * size);
+        setLayoutY((double) y * size);
 
-        if (isFigureUnderMe(x * size, y * size)) {
+        if (isFigureUnderMe((double) x * size, (double) y * size)) {
 
             //Returns the actual Figure under this Figure
-            Figure underMe = getFigureUnderMe(x * size, y * size);
-            underMe.setDeath(true);
+            Figure underMe = getFigureUnderMe((double) x * size, (double) y * size);
+            underMe.setDeath();
 
         }
 
-        GameView.cb.figuresOnTheField[(int) (getLayoutX() / size)][(int) (getLayoutY() / size)] = this;
+        ChessBoard.getInstance().getUiFigures()[(int) (getLayoutX() / size)][(int) (getLayoutY() / size)] = this;
 
         Game.changePlayer();
 
@@ -83,9 +81,127 @@ public abstract class Figure extends Button {
     }
 
     //Controlls Drag and Drop
-    private void dragDropActive() {
+    private void initDragAndDrop() {
 
         //Fires when the Figure gets Clicked
+        onMousePressedInitializer();
+
+        //Fires when the Figure is dragged
+        onMouseDraggedInitializer();
+
+        //Fires when the Mouse is relased
+        onMouseReleasedInitializer();
+
+    }
+
+    private void onMouseReleasedInitializer() {
+        setOnMouseReleased(event -> {
+
+            if (locked) {
+
+                locked = false;
+
+                //Computes the Location of the Mouse realive to the Chessboard
+                double x = getLocationRelativeToPane(event).getX() + ((double) size / 2);
+                double y = getLocationRelativeToPane(event).getY() + ((double) size / 2);
+
+                //Gets the Correct Position on the Field
+                double newX = x - (x % size);
+                double newY = y - (y % size);
+
+                //The Potential Figure under the new Position of this Figures new Location
+                Figure underMe;
+
+                //Corrects the values of the Placement if they
+                //are out of the Borders of the Chessboard
+                if (newX < 0) {
+                    newX = 0;
+                }
+                if (newY < 0) {
+                    newY = 0;
+                }
+
+                int chessBoardSize = ChessBoard.getInstance().getSize();
+
+                if (newX > chessBoardSize - size) {
+                    newX = (double) (chessBoardSize) - size;
+                }
+                if (newY > chessBoardSize - size) {
+                    newY = (double) (chessBoardSize) - size;
+                }
+
+                //Checks in the concrete Implementation if the
+                //performed move is valid, if not restore the Position
+                //before the DragDrop has started
+                if (!checkIfMoveIsValid(newX, newY)) {
+
+                    setLayoutX(locationBeforeDragDrop.getX());
+                    setLayoutY(locationBeforeDragDrop.getY());
+
+                    deMarkPossibleWays();
+
+                    return;
+
+                }
+
+                //Checks if there is an other Figure under this Figure
+                if (isFigureUnderMe(newX, newY)) {
+
+                    //Returns the actual Figure under this Figure
+                    underMe = getFigureUnderMe(newX, newY);
+
+                    if (underMe.player == Game.getPlayer() || underMe instanceof King) {
+
+                        setLayoutX(locationBeforeDragDrop.getX());
+                        setLayoutY(locationBeforeDragDrop.getY());
+                        deMarkPossibleWays();
+                        return;
+
+                    } else {
+                        underMe.setDeath();
+                    }
+
+                }
+
+                //Remove old entry in the figuresOnTheField Array
+                ChessBoard.getInstance().getUiFigures()[(int) (locationBeforeDragDrop.getX() / size)][(int) (locationBeforeDragDrop.getY() / size)] = null;
+
+                //Set the figure to the new Position
+                setLayoutX(newX);
+                setLayoutY(newY);
+
+                afterSuccessFullMoveAction();
+
+                //Add new entry in the figuresOnTheField Array
+                ChessBoard.getInstance().getUiFigures()[(int) (newX / size)][(int) (newY / size)] = this;
+                deMarkPossibleWays();
+
+                //Change Player
+                Game.changePlayer();
+            }
+
+        });
+    }
+
+    private void onMouseDraggedInitializer() {
+        setOnMouseDragged(event -> {
+
+            if (locked) {
+
+                //Computes the new x and y of the Mouse
+                //relativ to the de.sollder1.oldengine.engine.playground bzw. Chessboard
+                double x = getLocationRelativeToPane(event).getX();
+                double y = getLocationRelativeToPane(event).getY();
+
+                //Sets the Figure to the
+                setLayoutX(x);
+                setLayoutY(y);
+
+            }
+        });
+    }
+
+    private void onMousePressedInitializer() {
         setOnMousePressed(event -> {
 
             //If the current Player is also the owner of the Figure
@@ -101,200 +217,53 @@ public abstract class Figure extends Button {
             }
 
         });
-
-        //Fires when the Figure is dragged
-        setOnMouseDragged(event -> {
-
-            if (locked) {
-
-                //Computes the new x and y of the Mouse
-                //relativ to the de.sollder1.oldengine.engine.playground bzw. Chessboard
-                double x = getLocationRealtiveToPane(event).getX();
-                double y = getLocationRealtiveToPane(event).getY();
-
-                //Sets the Figure to the
-                setLayoutX(x);
-                setLayoutY(y);
-
-            }
-        });
-
-        //Fires when the Mouse is relased
-        setOnMouseReleased(event -> {
-
-            if (locked) {
-
-                locked = false;
-
-                //Computes the Location of the Mouse realive to the Chessboard
-                double x = getLocationRealtiveToPane(event).getX() + (size / 2);
-                double y = getLocationRealtiveToPane(event).getY() + (size / 2);
-
-                //GEts the Correct Position on the Field
-                double newx = x - (x % size);
-                double newy = y - (y % size);
-
-                //The Potential Figure under the new Position of this Figures new Location
-                Figure underMe;
-
-                //Corrects the values of the Placement if they
-                //are out of the Borders of the Chessboard
-                if (newx < 0) {
-                    newx = 0;
-                }
-                if (newy < 0) {
-                    newy = 0;
-                }
-
-                if (newx > GameView.cb.size - size) {
-                    newx = GameView.cb.size - size;
-                }
-                if (newy > GameView.cb.size - size) {
-                    newy = GameView.cb.size - size;
-                }
-
-                //Checks in the concrete Implementation if the
-                //performed move is valid, if not restore the Position
-                //before the DragDrop has started
-                if (!checkIfMoveIsValid(newx, newy)) {
-
-                    setLayoutX(locationBeforeDragDrop.getX());
-                    setLayoutY(locationBeforeDragDrop.getY());
-
-                    deMarkPossibleWays();
-
-                    return;
-
-                }
-
-                //Checks if there is an other Figure under this Figure
-                if (isFigureUnderMe(newx, newy)) {
-
-                    //Returns the actual Figure under this Figure
-                    underMe = getFigureUnderMe(newx, newy);
-
-                    //If the Figure is owned by the current Player
-                    //Or is the King
-                    //Set the Figure back too the locationBeforeDragDrop Position
-                    if (underMe.player == Game.getPlayer() || underMe instanceof King) {
-
-                        setLayoutX(locationBeforeDragDrop.getX());
-                        setLayoutY(locationBeforeDragDrop.getY());
-
-                        deMarkPossibleWays();
-
-                        return;
-
-                        //If the Figure under this Figure is owned
-                        //by the Enemy Player it is getting killed.
-                    } else {
-
-                        underMe.setDeath(true);
-
-                    }
-
-                }
-
-                //Remove old entry in the figuresOnTheField Array
-                GameView.cb.figuresOnTheField[(int) (locationBeforeDragDrop.getX() / size)][(int) (locationBeforeDragDrop.getY() / size)] = null;
-
-                //Set the figure to the new Position
-                setLayoutX(newx);
-                setLayoutY(newy);
-
-                //Add new entry in the figuresOnTheField Array
-                GameView.cb.figuresOnTheField[(int) (newx / size)][(int) (newy / size)] = this;
-
-                deMarkPossibleWays();
-
-                //Change Player
-                Game.changePlayer();
-
-                GameView.cb.printField();
-
-            }
-
-        });
-
     }
 
     //Computes the Position of the Mouse relativ to the Chessboard
-    private Point getLocationRealtiveToPane(MouseEvent event) {
+    private Point getLocationRelativeToPane(MouseEvent event) {
 
-        double x = event.getSceneX() - ((GameView.mainPane.getPrefWidth() - 100) / 2) - size / 2; //TODO: Skalierbar
-        double y = event.getSceneY() - ((GameView.mainPane.getPrefHeight() - GameView.cb.size) / 2) - size / 2;
+        double x = event.getSceneX() - ((GameView.mainPane.getPrefWidth() - 100) / 2) - (double) size / 2; //TODO: Skalierbar
+        double y = event.getSceneY() - ((GameView.mainPane.getPrefHeight() - ChessBoard.getInstance().getSize()) / 2) - size / 2;
 
         return new Point(x, y);
 
     }
 
-    //Returns if(true) or if not(false) there is an
-    //other Figure under This Figure
-    private Boolean isFigureUnderMe(double newx, double newy) {
 
-        Figure underMe = GameView.cb.figuresOnTheField[(int) (newx / size)][(int) (newy / size)];
+    private boolean isFigureUnderMe(double newX, double newY) {
 
+        Figure underMe = ChessBoard.getInstance().getUiFigures()[(int) (newX / size)][(int) (newY / size)];
         return underMe != null;
 
     }
 
-    //Returns the Figure under This Figure
-    private Figure getFigureUnderMe(double newx, double newy) {
+    private Figure getFigureUnderMe(double newX, double newY) {
 
-        return GameView.cb.figuresOnTheField[(int) (newx / size)][(int) (newy / size)];
+        return ChessBoard.getInstance().getUiFigures()[(int) (newX / size)][(int) (newY / size)];
 
     }
 
-    //Setzt die Figur bei true auf Death und bei false auf Alive(Alive setzten TODO)
-    //For this reason the size gets schrunk down to 50 and it is removed from the Chessboard
-    //and is added to the appropriate Graveyard
-    private void setDeath(boolean b) {
+    private void setDeath() {
 
-        if (b) {
+        ChessBoard.getInstance().getUiFigures()[(int) (getPrefWidth() / size)][(int) (getPrefHeight() / size)] = null;
 
-            setPrefSize(50.0, 50.0);
-
-            if (player == 1) {
-
-                GameView.cb.getChildren().remove(this);
-                Game.graveyardBlack.getChildren().add(this);
-
-                death = true;
-
-            } else {
-
-                GameView.cb.getChildren().remove(this);
-                Game.graveyardWhite.getChildren().add(this);
-
-                death = true;
-
-            }
-
-            setDisable(true);
-
-            GameView.cb.figuresOnTheField[(int) (getPrefWidth() / size)][(int) (getPrefHeight() / size)] = null;
-
+        if (player == 1) {
+            ChessBoard.getInstance().getChildren().remove(this);
+            Game.graveyardBlack.getChildren().add(this);
 
         } else {
-
-            //TODO: Set Alive
-
+            ChessBoard.getInstance().getChildren().remove(this);
+            Game.graveyardWhite.getChildren().add(this);
         }
+
+        setPrefSize(25, 25);
+        setStyle(getStyle() + "-fx-background-size: 25;" );
+        setDisable(true);
 
     }
 
     protected boolean isTileEmpty(int x, int y) {
-
-        if (figuresOnTheField[x][y] == null) {
-
-            return true;
-
-        } else {
-
-            return false;
-
-        }
-
+        return ChessBoard.getInstance().getUiFigures()[x][y] == null;
     }
 
     protected boolean isTileEnemy(int x, int y) {
@@ -303,15 +272,7 @@ public abstract class Figure extends Button {
             return false;
         }
 
-        if (figuresOnTheField[x][y].player == Game.getPlayer()) {
-
-            return false;
-
-        } else {
-
-            return true;
-
-        }
+        return ChessBoard.getInstance().getUiFigures()[x][y].player != Game.getPlayer();
 
     }
 
@@ -321,15 +282,7 @@ public abstract class Figure extends Button {
             return false;
         }
 
-        if (figuresOnTheField[x][y].player == Game.getPlayer()) {
-
-            return true;
-
-        } else {
-
-            return false;
-
-        }
+        return ChessBoard.getInstance().getUiFigures()[x][y].player == Game.getPlayer();
 
     }
 
@@ -338,21 +291,51 @@ public abstract class Figure extends Button {
         return player + "_" + itemID;
     }
 
-    //Must be Implemented in every explicit Implementation of this Class to
-    //determine if or if not the certain Move was Valid.
-    public abstract boolean checkIfMoveIsValid(double newx, double newy);
+    List<ArrayPoint> possibleCoordinatesBeforeMarking;
 
-    //Die möglichen Positionen werden auf dem Schachbrett
-    //Farblich markiert um Anfängern zu helfen
-    //Auschließlich Kosmetischer Natur
-    public abstract void markPossibleWays();
+    public void markPossibleWays() {
 
-    //Die Farblichen Markierungen werden wieder entfernt
-    //um einen normalen Spielfluss zu gewährleisten
-    //Auschließlich Kosmetischer Natur
-    public abstract void deMarkPossibleWays();
+        possibleCoordinatesBeforeMarking = getPossibleCoordinates();
+
+        ChessBoardTile[][] tiles = ChessBoard.getInstance().getTiles();
+
+        for (ArrayPoint p : possibleCoordinatesBeforeMarking) {
+
+            tiles[p.getX()][p.getY()].setStyle("-fx-background-color: " + p.getColorOfTheTile() + "; -fx-border-color: black;");
+
+        }
+
+    }
+
+    public void deMarkPossibleWays() {
+
+        ChessBoardTile[][] tiles = ChessBoard.getInstance().getTiles();
+
+        for (ArrayPoint p : possibleCoordinatesBeforeMarking) {
+            tiles[p.getX()][p.getY()].setStyle("-fx-background-color: " + tiles[p.getX()][p.getY()].standartColor + "; -fx-border-color: transparent;");
+        }
+
+    }
+
+    public boolean checkIfMoveIsValid(double newX, double newY) {
+
+        for (ArrayPoint possibleCoordinate : possibleCoordinatesBeforeMarking) {
+            if (possibleCoordinate.getX() == (int) (newX / size) && possibleCoordinate.getY() == (int) (newY / size)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected void afterSuccessFullMoveAction(){
+        //Standard is noop
+    }
 
     public abstract List<ArrayPoint> getPossibleCoordinates();
 
 
+    public int getPlayer() {
+        return player;
+    }
 }
