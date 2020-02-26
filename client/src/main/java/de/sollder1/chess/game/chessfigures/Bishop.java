@@ -53,7 +53,7 @@ public class Bishop extends Figure {
             }
         }
 
-        return posMoves;
+        return filterCoordinates(posMoves);
 
     }
 

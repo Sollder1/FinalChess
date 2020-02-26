@@ -35,9 +35,9 @@ public class Rook extends Figure {
      * Zuletzt werden noch die Markierungen der Tiles aufgehoben
      *
      * */
-    public ArrayList<ArrayPoint> getPossibleCoordinates() {
+    public List<ArrayPoint> getPossibleCoordinates() {
 
-        ArrayList<ArrayPoint> posMoves = new ArrayList<>();
+        List<ArrayPoint> posMoves = new ArrayList<>();
 
         //Nach Vorne schauen(schwarz)
         for (int y = currentPosition.getJ() + 1; y < 8; y++) {
@@ -67,8 +67,7 @@ public class Rook extends Figure {
             }
         }
 
-        return posMoves;
-
+        return filterCoordinates(posMoves);
     }
 
     /*Adds an possible move to the Lsit and return true if

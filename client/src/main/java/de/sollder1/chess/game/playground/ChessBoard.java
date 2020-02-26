@@ -13,9 +13,7 @@ import de.sollder1.chess.game.helpObjects.Point;
 import javafx.scene.layout.Pane;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Queue;
 import java.util.stream.Collectors;
 
 public class ChessBoard extends Pane {
@@ -207,53 +205,74 @@ public class ChessBoard extends Pane {
 
     //Prüfen ob der König im Matt steht.
     public static void postMoveProcessing(int player) {
-        List<String> dangerousPaths = new ArrayList<>();
+        List<Figure> matts = new ArrayList<>();
 
         instance.uiFigures.stream().filter(figure -> figure.getPlayer() == player).forEach(
                 figure -> {
 
                     for (ArrayPoint p : figure.getPossibleCoordinates()) {
                         if (getFigure(p) instanceof King) {
-                            dangerousPaths.add(p + " " + figure);
+                            matts.add(figure);
+                            ((King) getFigure(p)).mustMoveNextTurn();
                         }
                     }
 
                 }
 
-                //figure -> figure.getPossibleCoordinates().stream().filter(point -> getFigure(point) instanceof King).forEach(point -> dangerousPaths.add(point + " " +getFigure(point)))
+                //figure -> figure.getPossibleCoordinates().stream().filter(point -> getFigure(point) instanceof King).forEach(point -> matts.add(point + " " +getFigure(point)))
         );
 
-        System.out.println(dangerousPaths);
+        System.out.println(matts);
 
     }
 
     public static void markKingWays(int player, Figure king) {
 
-        List<ArrayPoint> enemyPaths = new ArrayList<>();
-
-        //TODO: Hier die PAwns filtern und seperat hinzufügen:
-        instance.uiFigures.stream().filter(figure -> figure.getPlayer() != player).forEach(figure -> {
-            enemyPaths.addAll(figure.getPossibleCoordinates().stream().filter(point -> point.getColorOfTheTile().equals("green")).collect(Collectors.toList()));
-        });
+        List<ArrayPoint> enemyPaths = getEnemyPaths(player);
 
         enemyPaths.stream().forEach(path -> {
             instance.tiles[path.getI()][path.getJ()].mark("yellow");
         });
 
         //The King cannot go this paths!
-        List<ArrayPoint> criticalPaths = new ArrayList<>();
+        List<ArrayPoint> criticalPaths =getCriticalPaths(king, enemyPaths);
 
-        king.getPossibleCoordinates().forEach(kingPath -> {
-            enemyPaths.stream().filter(enemyPath -> enemyPath.equals(kingPath)).forEach(enemyPath -> {
-                instance.tiles[enemyPath.getI()][enemyPath.getJ()].deMark();
-                instance.tiles[enemyPath.getI()][enemyPath.getJ()].mark("orange");
-                criticalPaths.add(enemyPath);
-            });
+        criticalPaths.stream().forEach(enemyPath -> {
+            instance.tiles[enemyPath.getI()][enemyPath.getJ()].deMark();
+            instance.tiles[enemyPath.getI()][enemyPath.getJ()].mark("orange");
         });
 
-        System.out.println(criticalPaths);
 
     }
+
+    public static List<ArrayPoint> getEnemyPaths(int player) {
+        List<ArrayPoint> enemyPaths = new ArrayList<>();
+
+        instance.uiFigures.stream().filter(figure -> figure.getPlayer() != player).forEach(figure -> {
+            if(figure instanceof Pawn){
+                enemyPaths.addAll( ((Pawn) figure).getKillingCoordinates());
+            }else {
+                enemyPaths.addAll(figure.getPossibleCoordinates().stream().filter(point -> point.getColorOfTheTile().equals("green")).collect(Collectors.toList()));
+            }
+        });
+
+        return enemyPaths;
+    }
+
+    public static List<ArrayPoint> getCriticalPaths(Figure king, List<ArrayPoint> enemyPaths) {
+        return getCriticalPaths(king, enemyPaths, king.getPossibleCoordinates());
+    }
+
+    public static List<ArrayPoint> getCriticalPaths(Figure king, List<ArrayPoint> enemyPaths, List<ArrayPoint> possibleCoordinates) {
+        List<ArrayPoint> criticalPaths = new ArrayList<>();
+
+        possibleCoordinates.forEach(kingPath -> {
+            enemyPaths.stream().filter(enemyPath -> enemyPath.equals(kingPath)).forEach(criticalPaths::add);
+        });
+
+        return criticalPaths;
+    }
+
 
     public static void deMarkEveryTile() {
         for (int i = 0; i < 8; i++) {

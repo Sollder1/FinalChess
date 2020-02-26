@@ -1,6 +1,9 @@
 package de.sollder1.chess.game.chessfigures;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import de.sollder1.chess.game.Game;
 import de.sollder1.chess.game.gui.view.GameView;
@@ -24,6 +27,7 @@ public abstract class Figure extends Button {
     protected int itemID;
     protected boolean figureMoved = false;
     private boolean death = false;
+    private boolean mustMove = false;
 
     protected Point currentPositionPX;
     protected ArrayPoint currentPosition;
@@ -125,7 +129,7 @@ public abstract class Figure extends Button {
                 ChessBoard.deMarkEveryTile();
                 ArrayPoint move = checkIfMoveIsValid(normalizedDestination);
 
-
+                //TODO: DEM USER ANZEIGEN DAS DER KÖNIG ZIEHEN MUSS!!
                 //Move not valid? -> Reset Position and return
                 if (move == null) {
                     setPosition(currentPositionPX);
@@ -212,6 +216,7 @@ public abstract class Figure extends Button {
 
                 if(this instanceof King){
                     ChessBoard.markKingWays(this.getPlayer(), this);
+
                 }
 
                 locked = true;
@@ -224,6 +229,10 @@ public abstract class Figure extends Button {
         });
     }
 
+    protected List<ArrayPoint> filterCoordinates(List<ArrayPoint> posMoves) {
+        return posMoves.stream().filter(move -> move.getI() >= 0 && move.getI() < 8 && move.getJ() > 0 && move.getJ() <8)
+                .collect(Collectors.toList());
+    }
 
 
     //TODO: Move to chessboard
@@ -291,6 +300,16 @@ public abstract class Figure extends Button {
 
         possibleCoordinatesBeforeMarking = getPossibleCoordinates();
 
+        if(this instanceof King){
+            possibleCoordinatesBeforeMarking = ((King) this).filterCriticalMoves(possibleCoordinatesBeforeMarking);
+
+            if(possibleCoordinatesBeforeMarking.isEmpty()){
+                //TODO: SPILE VERNÜNFTIG BEENDEN!
+                System.err.println("Das Spiel Endet, König von Spieler " + this.getPlayer() + " ist Schachmatt!");
+            }
+
+        }
+
         ChessBoardTile[][] tiles = ChessBoard.getInstance().getTiles();
 
         for (ArrayPoint p : possibleCoordinatesBeforeMarking) {
@@ -328,6 +347,10 @@ public abstract class Figure extends Button {
 
     public boolean isDeath() {
         return death;
+    }
+
+    public void mustMoveNextTurn(){
+        mustMove = true;
     }
 
     public abstract List<ArrayPoint> getPossibleCoordinates();

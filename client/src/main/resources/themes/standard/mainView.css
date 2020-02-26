@@ -25,6 +25,18 @@
 	-fx-border-width: 1;
 }
 
+.markedKingTile{
+	-fx-background-color: yellow;
+	-fx-border-color: black;
+	-fx-border-width: 1;
+}
+
+.markedKingDangerTile{
+	-fx-background-color: orange;
+	-fx-border-color: black;
+	-fx-border-width: 1;
+}
+
 /*FIGURES:*/
 .figure {
     -fx-background-color: Transparent;

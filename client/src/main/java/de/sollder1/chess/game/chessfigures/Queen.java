@@ -21,9 +21,9 @@ public class Queen extends Figure {
         }
     }
 
-    public ArrayList<ArrayPoint> getPossibleCoordinates() {
+    public List<ArrayPoint> getPossibleCoordinates() {
 
-        ArrayList<ArrayPoint> posMoves = new ArrayList<>();
+        List<ArrayPoint> posMoves = new ArrayList<>();
 
         //Nach unten rechts
         for (int x = currentPosition.getI() + 1, y = currentPosition.getJ() + 1; x < 8 && y < 8; x++, y++) {
@@ -82,7 +82,7 @@ public class Queen extends Figure {
             }
         }
 
-        return posMoves;
+        return filterCoordinates(posMoves);
 
     }
 

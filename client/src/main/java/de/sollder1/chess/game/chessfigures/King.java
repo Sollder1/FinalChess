@@ -1,6 +1,8 @@
 package de.sollder1.chess.game.chessfigures;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import de.sollder1.chess.game.helpObjects.ArrayPoint;
 import de.sollder1.chess.game.helpObjects.Point;
@@ -9,6 +11,7 @@ import de.sollder1.chess.game.playground.ChessBoard;
 import de.sollder1.chess.game.playground.ChessBoardTile;
 
 public class King extends Figure {
+
 
     public King(int itemID, ArrayPoint position, int player) {
 
@@ -21,9 +24,9 @@ public class King extends Figure {
         }
     }
 
-    public ArrayList<ArrayPoint> getPossibleCoordinates() {
+    public List<ArrayPoint> getPossibleCoordinates() {
 
-        ArrayList<ArrayPoint> posMoves = new ArrayList<>();
+        List<ArrayPoint> posMoves = new ArrayList<>();
 
         handleRochadeMoves(posMoves, currentPosition);
 
@@ -37,13 +40,6 @@ public class King extends Figure {
         for (int i = 0; i < 8; i++) {
 
             ArrayPoint destinationToTry = new ArrayPoint(currentPosition.getI() + potMoves[i].getI(), currentPosition.getJ() + potMoves[i].getJ());
-
-            if (destinationToTry.getI() < 0 || destinationToTry.getI() > 7
-                    || destinationToTry.getJ() < 0 || destinationToTry.getJ() > 7) {
-
-                continue;
-
-            }
 
             //Wenn Feld leer adden und continue
             if (isTileEmpty(destinationToTry.getI(), destinationToTry.getJ())) {
@@ -59,12 +55,12 @@ public class King extends Figure {
 
         }
 
-        return posMoves;
+        return (filterCoordinates(posMoves));
 
     }
 
 
-    private void handleRochadeMoves(ArrayList<ArrayPoint> posMoves, ArrayPoint position) {
+    private void handleRochadeMoves(List<ArrayPoint> posMoves, ArrayPoint position) {
 
         if (figureMoved) {
             return;
@@ -85,6 +81,19 @@ public class King extends Figure {
             }
         }
     }
+
+    protected List<ArrayPoint> filterCriticalMoves(List<ArrayPoint> posMoves) {
+        List<ArrayPoint> k = ChessBoard.getCriticalPaths(this, ChessBoard.getEnemyPaths(this.player), posMoves);
+        return posMoves.stream().filter(move -> {
+            for (ArrayPoint criticalMove : k) {
+                if (criticalMove.equals(move)){
+                    return false;
+                }
+            }
+            return true;
+        }).collect(Collectors.toList());
+    }
+
 
     @Override
     public String toString() {
