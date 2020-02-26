@@ -5,6 +5,7 @@ public class ArrayPoint {
 	private int x;
 	private int y;
 	private String colorOfTheTile = "green"; //Only for tiles
+	private Rochade rochade;
 	  
 	public ArrayPoint(int x, int y){
 		  
@@ -19,6 +20,17 @@ public class ArrayPoint {
 		this.setY(y);
 		colorOfTheTile = color;
 		  
+	}
+
+	public ArrayPoint(int x, int y, String colorOfTheTile, Rochade rochade) {
+		this.x = x;
+		this.y = y;
+		this.colorOfTheTile = colorOfTheTile;
+		this.rochade = rochade;
+	}
+
+	public Rochade getRochade() {
+		return rochade;
 	}
 
 	public int getX() {

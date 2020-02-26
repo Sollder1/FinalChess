@@ -1,0 +1,80 @@
+/*TILES:*/
+.lightTile {
+    -fx-background-color: "#cc9900";
+}
+
+.darkTile {
+    -fx-background-color: "#663300";
+}
+
+.markedFriendTile {
+    -fx-background-color: green;
+    -fx-border-color: black;
+    -fx-border-width: 1;
+}
+
+.markedEnemyTile {
+    -fx-background-color: red;
+    -fx-border-color: black;
+    -fx-border-width: 1;
+}
+
+.markedRochadeTile {
+	-fx-background-color: blue;
+	-fx-border-color: black;
+	-fx-border-width: 1;
+}
+
+/*FIGURES:*/
+.figure {
+    -fx-background-color: Transparent;
+	-fx-background-size: 75px;
+}
+
+.lightBishop {
+	-fx-background-image: url('gfx/blackBishop.png');
+}
+
+.darkBishop {
+	-fx-background-image: url('gfx/whiteBishop.png')
+}
+
+.lightKing {
+	-fx-background-image: url('gfx/blackKing.png');
+}
+
+.darkKing {
+	-fx-background-image: url('gfx/whiteKing.png');
+}
+
+.lightKnight {
+	-fx-background-image: url('gfx/blackKnigth.png');
+}
+
+.darkKnight {
+	-fx-background-image: url('gfx/whiteKnigth.png');
+}
+
+.lightPawn {
+	-fx-background-image: url('gfx/blackPawn.png');
+}
+
+.darkPawn {
+	-fx-background-image: url('gfx/whitePawn.png');
+}
+
+.lightQueen {
+	-fx-background-image: url('gfx/blackQueen.png');
+}
+
+.darkQueen {
+	-fx-background-image: url('gfx/whiteQueen.png');
+}
+
+.lightRook {
+	-fx-background-image: url('gfx/blackRook.png');
+}
+
+.darkRook {
+	-fx-background-image: url('gfx/whiteRook.png');
+}

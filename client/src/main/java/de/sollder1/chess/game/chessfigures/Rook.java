@@ -10,13 +10,13 @@ public class Rook extends Figure {
 
     public Rook(int size, int itemID, Point position, int player) {
 
-        super(size, itemID, position, player);
+        super(itemID, position, player);
 
         //Outsource to CSS File
         if (player == 1) {
-            setStyle("-fx-background-image: url('/gfx/blackRook.png');");
+            getStyleClass().add("lightRook");
         } else if (player == 2) {
-            setStyle("-fx-background-image: url('/gfx/whiteRook.png');");
+            getStyleClass().add("darkRook");
         }
 
     }
@@ -38,7 +38,7 @@ public class Rook extends Figure {
     public ArrayList<ArrayPoint> getPossibleCoordinates() {
 
         ArrayList<ArrayPoint> posMoves = new ArrayList<>();
-        ArrayPoint position = new ArrayPoint((int) (locationBeforeDragDrop.getX() / size), (int) ((locationBeforeDragDrop.getY() / size)));
+        ArrayPoint position = new ArrayPoint((int) (locationBeforeDragDrop.getX() / FIGURE_SIZE), (int) ((locationBeforeDragDrop.getY() / FIGURE_SIZE)));
 
         //Nach Vorne schauen(schwarz)
         for (int y = position.getY() + 1; y < 8; y++) {

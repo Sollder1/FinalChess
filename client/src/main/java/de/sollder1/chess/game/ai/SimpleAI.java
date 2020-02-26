@@ -42,7 +42,7 @@ public class SimpleAI extends AI{
 
 		}
 
-		toMove.moveFigure(posMoves.get(r2).getX(), posMoves.get(r2).getY());
+		//toMove.moveFigure(posMoves.get(r2).getX(), posMoves.get(r2).getY());
 		
 		
 	}

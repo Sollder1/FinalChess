@@ -11,19 +11,19 @@ public class Bishop extends Figure {
 
     public Bishop(int size, int itemID, Point position, int player) {
 
-        super(size, itemID, position, player);
+        super(itemID, position, player);
 
         if (player == 1) {
-            setStyle("-fx-background-image: url('/gfx/blackBishop.png');");
+            getStyleClass().add("lightBishop");
         } else {
-            setStyle("-fx-background-image: url('/gfx/whiteBishop.png');");
+            getStyleClass().add("darkBishop");
         }
     }
 
     public List<ArrayPoint> getPossibleCoordinates() {
 
         ArrayList<ArrayPoint> posMoves = new ArrayList<>();
-        ArrayPoint position = new ArrayPoint((int) (locationBeforeDragDrop.getX() / size), (int) (locationBeforeDragDrop.getY() / size));
+        ArrayPoint position = new ArrayPoint((int) (locationBeforeDragDrop.getX() / FIGURE_SIZE), (int) (locationBeforeDragDrop.getY() / FIGURE_SIZE));
 
         //Nach unten rechts
         for (int x = position.getX() + 1, y = position.getY() + 1; x < 8 && y < 8; x++, y++) {

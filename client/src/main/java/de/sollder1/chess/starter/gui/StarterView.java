@@ -1,5 +1,6 @@
 package de.sollder1.chess.starter.gui;
 
+import de.sollder1.chess.App;
 import de.sollder1.chess.game.Game;
 import de.sollder1.chess.game.gui.view.GameView;
 import de.sollder1.chess.game.helpObjects.GameMode;
@@ -30,7 +31,7 @@ public class StarterView extends Application {
         Scene s = new Scene(startPage);
 
         mainStage.setScene(s);
-        mainStage.setTitle("Chess Starter");
+        mainStage.setTitle("FinalChess " + App.getVersion());
         mainStage.setWidth(800);
         mainStage.setHeight(500);
         mainStage.setResizable(false);

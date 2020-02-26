@@ -2,11 +2,8 @@ package de.sollder1.chess.game.chessfigures;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import de.sollder1.chess.game.gui.view.GameView;
 import de.sollder1.chess.game.helpObjects.ArrayPoint;
 import de.sollder1.chess.game.helpObjects.Point;
-import de.sollder1.chess.game.playground.ChessBoardTile;
 
 public class Queen extends Figure {
 
@@ -14,21 +11,20 @@ public class Queen extends Figure {
 
     public Queen(int size, int itemID, Point position, int player) {
 
-        super(size, itemID, position, player);
+        super(itemID, position, player);
 
         //Outsource to CSS File
         if (player == 1) {
-            setStyle("-fx-background-image: url('/gfx/blackQueen.png');");
+            getStyleClass().add("lightQueen");
         } else if (player == 2) {
-            setStyle("-fx-background-image: url('/gfx/whiteQueen.png');");
+            getStyleClass().add("darkQueen");
         }
-
     }
 
     public ArrayList<ArrayPoint> getPossibleCoordinates() {
 
         ArrayList<ArrayPoint> posMoves = new ArrayList<>();
-        ArrayPoint position = new ArrayPoint((int) (locationBeforeDragDrop.getX() / size), (int) ((locationBeforeDragDrop.getY() / size)));
+        ArrayPoint position = new ArrayPoint((int) (locationBeforeDragDrop.getX() / FIGURE_SIZE), (int) ((locationBeforeDragDrop.getY() / FIGURE_SIZE)));
 
         //Nach unten rechts
         for (int x = position.getX() + 1, y = position.getY() + 1; x < 8 && y < 8; x++, y++) {

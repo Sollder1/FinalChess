@@ -2,23 +2,21 @@ package de.sollder1.chess.game.chessfigures;
 
 import java.util.ArrayList;
 
-import de.sollder1.chess.game.gui.view.GameView;
 import de.sollder1.chess.game.helpObjects.ArrayPoint;
 import de.sollder1.chess.game.helpObjects.Point;
-import de.sollder1.chess.game.playground.ChessBoardTile;
 
-public class Knigth extends Figure {
+public class Knight extends Figure {
 
     ArrayList<ArrayPoint> possibleCoordinates;
 
-    public Knigth(int size, int itemID, Point position, int player) {
+    public Knight(int size, int itemID, Point position, int player) {
 
-        super(size, itemID, position, player);
+        super(itemID, position, player);
 
         if (player == 1) {
-            setStyle("-fx-background-image: url('/gfx/blackKnigth.png');");
+            getStyleClass().add("lightKnight");
         } else if (player == 2) {
-            setStyle("-fx-background-image: url('/gfx/whiteKnigth.png');");
+            getStyleClass().add("darkKnight");
         }
     }
 
@@ -26,7 +24,7 @@ public class Knigth extends Figure {
     public ArrayList<ArrayPoint> getPossibleCoordinates() {
 
         ArrayList<ArrayPoint> posMoves = new ArrayList<>();
-        ArrayPoint position = new ArrayPoint((int) (locationBeforeDragDrop.getX() / size), (int) ((locationBeforeDragDrop.getY() / size)));
+        ArrayPoint position = new ArrayPoint((int) (locationBeforeDragDrop.getX() / FIGURE_SIZE), (int) ((locationBeforeDragDrop.getY() / FIGURE_SIZE)));
 
         int[] mods1 = {1, -1, 1, -1};
         int[] mods2 = {2, 2, -2, -2};

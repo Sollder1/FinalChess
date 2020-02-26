@@ -7,18 +7,16 @@ import javafx.scene.layout.Pane;
 //The Tiles on the Chessboard
 
 public class ChessBoardTile extends Button{
-	
-	public String standartColor;
-	
+
+	private boolean lightColor;
+
 	//Color: as HEX-Code
 	//Size as var for heigth and width
 	//Position: the Coordinates of the Tile relativ 
 	//to the Parent
-	public ChessBoardTile(String color, int size, Point position) {
-		
-		setStyle("-fx-background-color: " + color);		
-		
-		standartColor = color;
+	public ChessBoardTile(boolean lightColor, int size, Point position) {
+
+		getStyleClass().add(lightColor ? "lightTile" : "darkTile");
 		
 		setLayoutX(position.getX());
 		setLayoutY(position.getY());
@@ -26,9 +24,9 @@ public class ChessBoardTile extends Button{
 		setPrefSize(size, size);
 	    setMinSize(Pane.USE_PREF_SIZE, Pane.USE_PREF_SIZE);
 	    setMaxSize(Pane.USE_PREF_SIZE, Pane.USE_PREF_SIZE);
-	    
-	    setId("tiles");
-	    
+
+	    this.lightColor = lightColor;
+
 	    clickListener();
 		
 	}
@@ -43,5 +41,27 @@ public class ChessBoardTile extends Button{
 		});
 		
 	}
-	
+
+	public void mark(String colorOfTheTile) {
+
+		getStyleClass().clear();
+
+		String classToAdd;
+
+		switch (colorOfTheTile){
+			case "red": classToAdd = "markedEnemyTile"; break;
+			case "green": classToAdd = "markedFriendTile"; break;
+			case "blue": classToAdd = "markedRochadeTile"; break;
+			default: classToAdd = "";
+		}
+		getStyleClass().add(classToAdd);
+
+	}
+
+	public void deMark() {
+
+		getStyleClass().clear();
+		getStyleClass().add(lightColor ? "lightTile" : "darkTile");
+
+	}
 }

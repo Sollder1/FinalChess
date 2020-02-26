@@ -3,6 +3,7 @@ package de.sollder1.chess.game;
 import de.sollder1.chess.game.ai.SimpleAI;
 import de.sollder1.chess.game.gui.view.GameView;
 import de.sollder1.chess.game.helpObjects.GameMode;
+import de.sollder1.chess.game.playground.ChessBoard;
 import javafx.scene.control.Label;
 import javafx.scene.layout.TilePane;
 import javafx.stage.Stage;
@@ -44,6 +45,7 @@ public class Game {
 
     public static void stopGameInstance() {
         Game.gameInstanceRunning = false;
+
     }
 
     public static void changePlayer() {

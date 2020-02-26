@@ -17,8 +17,8 @@
                   <Font size="20.0" />
                </font>
             </Label>
-            <TilePane fx:id="graveyardWhite" layoutX="14.0" layoutY="435.0" prefColumns="8" prefHeight="202.0" prefRows="8" prefTileHeight="25.0" prefTileWidth="25.0" prefWidth="202.0" style="-fx-border-color: black;" />
-            <TilePane fx:id="graveyardBlack" layoutX="284.0" layoutY="435.0" prefColumns="8" prefHeight="202.0" prefRows="8" prefTileHeight="25.0" prefTileWidth="25.0" prefWidth="202.0" style="-fx-border-color: black;" />
+            <TilePane fx:id="graveyardWhite" layoutX="14.0" layoutY="435.0" prefColumns="4" prefHeight="202.0" prefRows="4" prefWidth="202.0" style="-fx-border-color: black;" />
+            <TilePane fx:id="graveyardBlack" layoutX="284.0" layoutY="435.0" prefColumns="4" prefHeight="202.0" prefRows="4" prefWidth="202.0" style="-fx-border-color: black;" />
          </children>
       </Pane>
       <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="600.0" layoutX="550.0" layoutY="50.0" stroke="BLACK" strokeType="INSIDE" width="600.0" />
