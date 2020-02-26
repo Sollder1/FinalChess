@@ -1,30 +1,32 @@
 package de.sollder1.chess.game.helpObjects;
 
+import java.util.Objects;
+
 public class ArrayPoint {
 	
-	private int x;
-	private int y;
+	private int i;
+	private int j;
 	private String colorOfTheTile = "green"; //Only for tiles
 	private Rochade rochade;
 	  
-	public ArrayPoint(int x, int y){
+	public ArrayPoint(int i, int j){
 		  
-		this.setX(x);
-		this.setY(y);
+		this.setI(i);
+		this.setJ(j);
 		  
 	}
 	
-	public ArrayPoint(int x, int y, String color){
+	public ArrayPoint(int i, int j, String color){
 		  
-		this.setX(x);
-		this.setY(y);
+		this.setI(i);
+		this.setJ(j);
 		colorOfTheTile = color;
 		  
 	}
 
-	public ArrayPoint(int x, int y, String colorOfTheTile, Rochade rochade) {
-		this.x = x;
-		this.y = y;
+	public ArrayPoint(int i, int j, String colorOfTheTile, Rochade rochade) {
+		this.i = i;
+		this.j = j;
 		this.colorOfTheTile = colorOfTheTile;
 		this.rochade = rochade;
 	}
@@ -33,20 +35,20 @@ public class ArrayPoint {
 		return rochade;
 	}
 
-	public int getX() {
-		return x;
+	public int getI() {
+		return i;
 	}
 
-	public void setX(int x) {
-		this.x = x;
+	public void setI(int i) {
+		this.i = i;
 	}
 
-	public int getY() {
-		return y;
+	public int getJ() {
+		return j;
 	}
 
-	public void setY(int y) {
-		this.y = y;
+	public void setJ(int j) {
+		this.j = j;
 	}
 
 	public String getColorOfTheTile() {
@@ -58,10 +60,22 @@ public class ArrayPoint {
 	}
 
 	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		ArrayPoint that = (ArrayPoint) o;
+		return i == that.i &&
+				j == that.j;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(i, j);
+	}
+
+	@Override
 	public String toString() {
-		
-		return "["+ x + "," + y + "]";
-		
+		return "["+ i + "," + j + "]";
 	}
 	
 }

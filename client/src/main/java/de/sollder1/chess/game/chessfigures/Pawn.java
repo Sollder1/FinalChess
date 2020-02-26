@@ -11,7 +11,7 @@ public class Pawn extends Figure {
 
     //itemID the ID within the Players figureSet applied to the figure
     //For others lock at the SuperConstructor
-    public Pawn(int size, int itemID, Point position, int player) {
+    public Pawn(int itemID, ArrayPoint position, int player) {
 
         super(itemID, position, player);
 
@@ -39,26 +39,25 @@ public class Pawn extends Figure {
 			mod = -1;
 		}
 
-		ArrayPoint position = new ArrayPoint((int) (locationBeforeDragDrop.getX() / FIGURE_SIZE), (int) (locationBeforeDragDrop.getY() / FIGURE_SIZE));
 		ArrayList<ArrayPoint> posMoves = new ArrayList<>();
 
-		if (isTileEmpty(position.getX(), position.getY()+ (1* mod))) {
-			posMoves.add(new ArrayPoint(position.getX() , position.getY()+ (1* mod)));
+		if (isTileEmpty(currentPosition.getI(), currentPosition.getJ()+ (1* mod))) {
+			posMoves.add(new ArrayPoint(currentPosition.getI() , currentPosition.getJ()+ (1* mod)));
 		}
 
- 		if (isTileEmpty(position.getX(), position.getY()+ (2* mod)) && !figureMoved) {
-			posMoves.add(new ArrayPoint(position.getX(), position.getY()+ (2* mod)));
+ 		if (isTileEmpty(currentPosition.getI(), currentPosition.getJ()+ (2* mod)) && !figureMoved) {
+			posMoves.add(new ArrayPoint(currentPosition.getI(), currentPosition.getJ()+ (2* mod)));
 		}
 
  		try {
-			if (isTileEnemy(position.getX() + (1* mod), position.getY() + (1* mod))) {
+			if (isTileEnemy(currentPosition.getI() + (1* mod), currentPosition.getJ() + (1* mod))) {
 
-				posMoves.add(new ArrayPoint(position.getX() + (1* mod), position.getY() + (1* mod), "red"));
+				posMoves.add(new ArrayPoint(currentPosition.getI() + (1* mod), currentPosition.getJ() + (1* mod), "red"));
 			}
 
-			if (isTileEnemy(position.getX() + (-1* mod), position.getY() + (1* mod))) {
+			if (isTileEnemy(currentPosition.getI() + (-1* mod), currentPosition.getJ() + (1* mod))) {
 
-				posMoves.add(new ArrayPoint(position.getX() + (-1* mod), position.getY() + (1* mod), "red"));
+				posMoves.add(new ArrayPoint(currentPosition.getI() + (-1* mod), currentPosition.getJ() + (1* mod), "red"));
 			}
 
 		}catch (IndexOutOfBoundsException ignore){

@@ -13,16 +13,16 @@ public abstract class AI {
 
     protected void updateList(int player) {
 
-        aiFigures.clear();
-
-        for(Figure[] f : ChessBoard.getInstance().getUiFigures()) {
-            for(Figure fig : f) {
-                if(fig != null && fig.getPlayer() == player) {
-                    aiFigures.add(fig);
-                }
-            }
-        }
-
+        //aiFigures.clear();
+//
+        //for(Figure[] f : ChessBoard.getInstance().getUiFigures()) {
+        //    for(Figure fig : f) {
+        //        if(fig != null && fig.getPlayer() == player) {
+        //            aiFigures.add(fig);
+        //        }
+        //    }
+        //}
+//
     }
 
 }

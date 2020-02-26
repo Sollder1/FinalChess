@@ -9,7 +9,7 @@ public class Knight extends Figure {
 
     ArrayList<ArrayPoint> possibleCoordinates;
 
-    public Knight(int size, int itemID, Point position, int player) {
+    public Knight(int itemID, ArrayPoint position, int player) {
 
         super(itemID, position, player);
 
@@ -24,7 +24,6 @@ public class Knight extends Figure {
     public ArrayList<ArrayPoint> getPossibleCoordinates() {
 
         ArrayList<ArrayPoint> posMoves = new ArrayList<>();
-        ArrayPoint position = new ArrayPoint((int) (locationBeforeDragDrop.getX() / FIGURE_SIZE), (int) ((locationBeforeDragDrop.getY() / FIGURE_SIZE)));
 
         int[] mods1 = {1, -1, 1, -1};
         int[] mods2 = {2, 2, -2, -2};
@@ -32,7 +31,7 @@ public class Knight extends Figure {
         //Nach vorne und Hinten schauen
         for (int i = 0; i < 4; i++) {
             try {
-                if (!checkForPossibleMove(posMoves, position, mods2, mods1, i)) {
+                if (!checkForPossibleMove(posMoves, currentPosition, mods2, mods1, i)) {
 					break;
 				}
             } catch (ArrayIndexOutOfBoundsException ignored) {
@@ -44,7 +43,7 @@ public class Knight extends Figure {
         //Nach links und rechts schauen
         for (int i = 0; i < 4; i++) {
             try {
-				if (!checkForPossibleMove(posMoves, position, mods1, mods2, i)) {
+				if (!checkForPossibleMove(posMoves, currentPosition, mods1, mods2, i)) {
 					break;
 				}
             } catch (ArrayIndexOutOfBoundsException ignored) {
@@ -59,16 +58,22 @@ public class Knight extends Figure {
 
     protected boolean checkForPossibleMove(ArrayList<ArrayPoint> posMoves, ArrayPoint position, int[] mods1, int[] mods2, int i) {
 
-        if (isTileEmpty(position.getX() + mods2[i], position.getY() + mods1[i])) {
-            posMoves.add(new ArrayPoint(position.getX() + mods2[i], position.getY() + mods1[i]));
+        ArrayPoint destinationToTry = new ArrayPoint(position.getI() + mods2[i], position.getJ() + mods1[i]);
+
+        if (destinationToTry.getI() < 0 || destinationToTry.getI() > 7
+                || destinationToTry.getJ() < 0 || destinationToTry.getJ() > 7) {
+
             return true;
-        } else if (isTileEnemy(position.getX() + mods2[i], position.getY() + mods1[i])) {
-            posMoves.add(new ArrayPoint(position.getX() + mods2[i], position.getY() + mods1[i], "red"));
-            return true;
-        } else if (isTileFriend(position.getX() + mods2[i], position.getY() + mods1[i])) {
-            return true;
+
         }
-        return false;
+
+        if (isTileEmpty(destinationToTry.getI(), destinationToTry.getJ())) {
+            posMoves.add(destinationToTry);
+            return true;
+        } else if (isTileEnemy(destinationToTry.getI(), destinationToTry.getJ())) {
+            posMoves.add(new ArrayPoint(destinationToTry.getI(), destinationToTry.getJ(), "red"));
+            return true;
+        } else return isTileFriend(destinationToTry.getI(), destinationToTry.getJ());
 
     }
 

@@ -9,7 +9,7 @@ public class Queen extends Figure {
 
     ArrayList<ArrayPoint> possibleCoordinates;
 
-    public Queen(int size, int itemID, Point position, int player) {
+    public Queen(int itemID, ArrayPoint position, int player) {
 
         super(itemID, position, player);
 
@@ -24,31 +24,30 @@ public class Queen extends Figure {
     public ArrayList<ArrayPoint> getPossibleCoordinates() {
 
         ArrayList<ArrayPoint> posMoves = new ArrayList<>();
-        ArrayPoint position = new ArrayPoint((int) (locationBeforeDragDrop.getX() / FIGURE_SIZE), (int) ((locationBeforeDragDrop.getY() / FIGURE_SIZE)));
 
         //Nach unten rechts
-        for (int x = position.getX() + 1, y = position.getY() + 1; x < 8 && y < 8; x++, y++) {
+        for (int x = currentPosition.getI() + 1, y = currentPosition.getJ() + 1; x < 8 && y < 8; x++, y++) {
             if (!checkForPossibleMove(posMoves, x, y)) {
                 break;
             }
         }
 
         //Nach unten links
-        for (int x = position.getX() - 1, y = position.getY() + 1; x >= 0 && y < 8; x--, y++) {
+        for (int x = currentPosition.getI() - 1, y = currentPosition.getJ() + 1; x >= 0 && y < 8; x--, y++) {
             if (!checkForPossibleMove(posMoves, x, y)) {
                 break;
             }
         }
 
         //Nach oben rechts
-        for (int x = position.getX() + 1, y = position.getY() - 1; x < 8 && y >= 0; x++, y--) {
+        for (int x = currentPosition.getI() + 1, y = currentPosition.getJ() - 1; x < 8 && y >= 0; x++, y--) {
             if (!checkForPossibleMove(posMoves, x, y)) {
                 break;
             }
         }
 
         //Nach oben links
-        for (int x = position.getX() - 1, y = position.getY() - 1; x >= 0 && y >= 0; x--, y--) {
+        for (int x = currentPosition.getI() - 1, y = currentPosition.getJ() - 1; x >= 0 && y >= 0; x--, y--) {
             if (!checkForPossibleMove(posMoves, x, y)) {
                 break;
             }
@@ -56,29 +55,29 @@ public class Queen extends Figure {
 
         //Verhalten des Rooks:
         //Nach Vorne schauen(schwarz)
-        for (int y = position.getY() + 1; y < 8; y++) {
-            if (!checkForPossibleMove(posMoves, position.getX(), y)) {
+        for (int y = currentPosition.getJ() + 1; y < 8; y++) {
+            if (!checkForPossibleMove(posMoves, currentPosition.getI(), y)) {
                 break;
             }
         }
 
         //Nach hinten schauen(schwarz)
-        for (int y = position.getY() - 1; y >= 0; y--) {
-            if (!checkForPossibleMove(posMoves, position.getX(), y)) {
+        for (int y = currentPosition.getJ() - 1; y >= 0; y--) {
+            if (!checkForPossibleMove(posMoves, currentPosition.getI(), y)) {
                 break;
             }
         }
 
         //Nach links schauen(schwarz)
-        for (int x = position.getX() - 1; x >= 0; x--) {
-            if (!checkForPossibleMove(posMoves, x, position.getY())) {
+        for (int x = currentPosition.getI() - 1; x >= 0; x--) {
+            if (!checkForPossibleMove(posMoves, x, currentPosition.getJ())) {
                 break;
             }
         }
 
         //Nach links schauen(schwarz)
-        for (int x = position.getX() + 1; x < 8; x++) {
-            if (!checkForPossibleMove(posMoves, x, position.getY())) {
+        for (int x = currentPosition.getI() + 1; x < 8; x++) {
+            if (!checkForPossibleMove(posMoves, x, currentPosition.getJ())) {
                 break;
             }
         }

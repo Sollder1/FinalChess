@@ -9,7 +9,7 @@ import de.sollder1.chess.game.helpObjects.Point;
 
 public class Bishop extends Figure {
 
-    public Bishop(int size, int itemID, Point position, int player) {
+    public Bishop(int itemID, ArrayPoint position, int player) {
 
         super(itemID, position, player);
 
@@ -23,31 +23,31 @@ public class Bishop extends Figure {
     public List<ArrayPoint> getPossibleCoordinates() {
 
         ArrayList<ArrayPoint> posMoves = new ArrayList<>();
-        ArrayPoint position = new ArrayPoint((int) (locationBeforeDragDrop.getX() / FIGURE_SIZE), (int) (locationBeforeDragDrop.getY() / FIGURE_SIZE));
+        //ArrayPoint position = new ArrayPoint((int) (currentLocation.getI() / FIGURE_SIZE), (int) (currentLocation.getJ() / FIGURE_SIZE));
 
         //Nach unten rechts
-        for (int x = position.getX() + 1, y = position.getY() + 1; x < 8 && y < 8; x++, y++) {
+        for (int x = currentPosition.getI() + 1, y = currentPosition.getJ() + 1; x < 8 && y < 8; x++, y++) {
             if (!checkForPossibleMove(posMoves, x, y)) {
                 break;
             }
         }
 
         //Nach unten links
-        for (int x = position.getX() - 1, y = position.getY() + 1; x >= 0 && y < 8; x--, y++) {
+        for (int x = currentPosition.getI() - 1, y = currentPosition.getJ() + 1; x >= 0 && y < 8; x--, y++) {
             if (!checkForPossibleMove(posMoves, x, y)) {
                 break;
             }
         }
 
         //Nach oben rechts
-        for (int x = position.getX() + 1, y = position.getY() - 1; x < 8 && y >= 0; x++, y--) {
+        for (int x = currentPosition.getI() + 1, y = currentPosition.getJ() - 1; x < 8 && y >= 0; x++, y--) {
             if (!checkForPossibleMove(posMoves, x, y)) {
                 break;
             }
         }
 
         //Nach oben links
-        for (int x = position.getX() - 1, y = position.getY() - 1; x >= 0 && y >= 0; x--, y--) {
+        for (int x = currentPosition.getI() - 1, y = currentPosition.getJ() - 1; x >= 0 && y >= 0; x--, y--) {
             if (!checkForPossibleMove(posMoves, x, y)) {
                 break;
             }

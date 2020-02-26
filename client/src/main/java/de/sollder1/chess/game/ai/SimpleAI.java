@@ -36,7 +36,7 @@ public class SimpleAI extends AI{
 		List<ArrayPoint> posMoves = toMove.getPossibleCoordinates();
 		int r2 = (int) (Math.random() * toMove.getPossibleCoordinates().size());
 
-		if(posMoves.get(r2).getX() > 7 || posMoves.get(r2).getY() > 7){
+		if(posMoves.get(r2).getI() > 7 || posMoves.get(r2).getJ() > 7){
 			System.err.println("Fehelrhafte Implementierung der getPossibleCoordinates Methode!");
 			System.err.println("Von Figur " + toMove);
 

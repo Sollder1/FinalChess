@@ -10,7 +10,7 @@ import de.sollder1.chess.game.playground.ChessBoardTile;
 
 public class King extends Figure {
 
-    public King(int size, int itemID, Point position, int player) {
+    public King(int itemID, ArrayPoint position, int player) {
 
         super(itemID, position, player);
 
@@ -24,9 +24,8 @@ public class King extends Figure {
     public ArrayList<ArrayPoint> getPossibleCoordinates() {
 
         ArrayList<ArrayPoint> posMoves = new ArrayList<>();
-        ArrayPoint position = new ArrayPoint((int) (locationBeforeDragDrop.getX() / FIGURE_SIZE), (int) ((locationBeforeDragDrop.getY() / FIGURE_SIZE)));
 
-        handleRochadeMoves(posMoves, position);
+        handleRochadeMoves(posMoves, currentPosition);
 
         //Mögliche Bewegungen die Performed werden könnten
         ArrayPoint[] potMoves = {new ArrayPoint(0, 1), new ArrayPoint(0, -1), new ArrayPoint(1, 0), new ArrayPoint(-1, 0),
@@ -37,20 +36,26 @@ public class King extends Figure {
         // Bewegungen durchgeführt werden können
         for (int i = 0; i < 8; i++) {
 
-            try {
-                //Wenn Feld leer adden und continue
-                if (isTileEmpty(position.getX() + potMoves[i].getX(), position.getY() + potMoves[i].getY())) {
+            ArrayPoint destinationToTry = new ArrayPoint(currentPosition.getI() + potMoves[i].getI(), currentPosition.getJ() + potMoves[i].getJ());
 
-                    posMoves.add(new ArrayPoint(position.getX() + potMoves[i].getX(), position.getY() + potMoves[i].getY()));
+            if (destinationToTry.getI() < 0 || destinationToTry.getI() > 7
+                    || destinationToTry.getJ() < 0 || destinationToTry.getJ() > 7) {
 
-                } else if (isTileEnemy(position.getX() + potMoves[i].getX(), position.getY() + potMoves[i].getY())) {
-
-                    posMoves.add(new ArrayPoint(position.getX() + potMoves[i].getX(), position.getY() + potMoves[i].getY(), "red"));
-
-                }
-            } catch (IndexOutOfBoundsException ignore) {
+                continue;
 
             }
+
+            //Wenn Feld leer adden und continue
+            if (isTileEmpty(destinationToTry.getI(), destinationToTry.getJ())) {
+
+                posMoves.add(new ArrayPoint(currentPosition.getI() + potMoves[i].getI(), currentPosition.getJ() + potMoves[i].getJ()));
+
+            } else if (isTileEnemy(destinationToTry.getI(), destinationToTry.getJ())) {
+
+                posMoves.add(new ArrayPoint(currentPosition.getI() + potMoves[i].getI(), currentPosition.getJ() + potMoves[i].getJ(), "red"));
+
+            }
+
 
         }
 
@@ -58,26 +63,25 @@ public class King extends Figure {
 
     }
 
+
     private void handleRochadeMoves(ArrayList<ArrayPoint> posMoves, ArrayPoint position) {
-        Figure[][] figures = ChessBoard.getInstance().getUiFigures();
-        ChessBoardTile[][] tiles = ChessBoard.getInstance().getTiles();
 
         if (figureMoved) {
             return;
         }
 
         //Rochade Prüfen:
-        if (figures[0][position.getY()] instanceof Rook && !figures[0][position.getY()].figureMoved) {
+        if (ChessBoard.getFigure(0, position.getJ()) instanceof Rook && !ChessBoard.getFigure(0, position.getJ()).figureMoved) {
             //Weg frei?
-            if (isTileEmpty(1, position.getY()) && isTileEmpty(2, position.getY()) && isTileEmpty(3, position.getY())) {
-                posMoves.add(new ArrayPoint(0, position.getY(), "blue", Rochade.LONG));
+            if (isTileEmpty(1, position.getJ()) && isTileEmpty(2, position.getJ()) && isTileEmpty(3, position.getJ())) {
+                posMoves.add(new ArrayPoint(0, position.getJ(), "blue", Rochade.LONG));
             }
         }
 
-        if (figures[7][position.getY()] instanceof Rook && !figures[7][position.getY()].figureMoved) {
+        if (ChessBoard.getFigure(7, position.getJ()) instanceof Rook && !ChessBoard.getFigure(7, position.getJ()).figureMoved) {
             //Weg frei?
-            if (isTileEmpty(5, position.getY()) && isTileEmpty(6, position.getY())) {
-                posMoves.add(new ArrayPoint(7, position.getY(), "blue", Rochade.SHORT));
+            if (isTileEmpty(5, position.getJ()) && isTileEmpty(6, position.getJ())) {
+                posMoves.add(new ArrayPoint(7, position.getJ(), "blue", Rochade.SHORT));
             }
         }
     }

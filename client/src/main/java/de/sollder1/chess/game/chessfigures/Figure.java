@@ -23,13 +23,15 @@ public abstract class Figure extends Button {
     protected int player;
     protected int itemID;
     protected boolean figureMoved = false;
+    private boolean death = false;
 
-    Point locationBeforeDragDrop;
+    protected Point currentPositionPX;
+    protected ArrayPoint currentPosition;
 
     //Player: 2: weißer pawn; 1: schwarzer pawn
     //Size as var for heigth and width
     //position The Position within the Pane
-    public Figure(int itemID, Point position, int player) {
+    public Figure(int itemID, ArrayPoint position, int player) {
 
         if (player != 1 && player != 2) {
             Logger.logE("Wrong playerId");
@@ -40,14 +42,15 @@ public abstract class Figure extends Button {
 
         setBackground(Background.EMPTY);
 
-        locationBeforeDragDrop = position;
+        this.currentPositionPX = new Point((int) position.getI() * FIGURE_SIZE, (int) position.getJ() * FIGURE_SIZE);;
+        this.currentPosition = position;
 
         setPrefSize(FIGURE_SIZE, FIGURE_SIZE);
         setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
         setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
 
-        setLayoutX(position.getX());
-        setLayoutY(position.getY());
+        setLayoutX(currentPositionPX.getX());
+        setLayoutY(currentPositionPX.getY());
 
         this.itemID = itemID;
         this.player = player;
@@ -57,17 +60,14 @@ public abstract class Figure extends Button {
     }
 
     //Erlaubt die Programatische Verschiebung einer Figur.
-    public void moveFigure(int i, int j, Point startPosition) {
-
-        locationBeforeDragDrop = startPosition;
-        ChessBoard.getInstance().getUiFigures()[(int) (locationBeforeDragDrop.getX() / FIGURE_SIZE)][(int) (locationBeforeDragDrop.getY() / FIGURE_SIZE)] = null;
+    public void moveFigure(int i, int j) {
 
         Figure underMe;
         if (ChessBoard.isFigureUnderMe(new Point(i * FIGURE_SIZE, j * FIGURE_SIZE))) {
 
-            underMe = ChessBoard.getFigureUnderMe(new Point(i * FIGURE_SIZE, j * FIGURE_SIZE));
+            underMe = ChessBoard.getFigure(new ArrayPoint(i , j));
             if (underMe.player == Game.getPlayer() || underMe instanceof King) {
-                setPosition(locationBeforeDragDrop);
+                setPosition(currentPositionPX);
                 return;
             } else {
                 underMe.setDeath();
@@ -77,11 +77,14 @@ public abstract class Figure extends Button {
 
         setPosition(new Point(i * FIGURE_SIZE, j * FIGURE_SIZE));
         afterSuccessFullMoveAction();
-        ChessBoard.getInstance().getUiFigures()[(int) (getLayoutX() / FIGURE_SIZE)][(int) (getLayoutY() / FIGURE_SIZE)] = this;
 
         Game.changePlayer();
 
 
+    }
+
+    public void moveFigure(ArrayPoint destination) {
+        moveFigure(destination.getI(), destination.getJ());
     }
 
     //Controlls Drag and Drop
@@ -98,9 +101,19 @@ public abstract class Figure extends Button {
 
     }
 
-    private void setPosition(Point position){
+    private void setPosition(Point position) {
         setLayoutX(position.getX());
         setLayoutY(position.getY());
+        currentPositionPX = position;
+        currentPosition = new ArrayPoint((int) position.getX() / FIGURE_SIZE, (int) position.getY() / FIGURE_SIZE);
+    }
+
+    public ArrayPoint getPosition(){
+        return currentPosition;
+    }
+
+    public Point getPositionPx(){
+        return currentPositionPX;
     }
 
     private void onMouseReleasedInitializer() {
@@ -108,45 +121,40 @@ public abstract class Figure extends Button {
             if (locked) {
 
                 locked = false;
-                Point normalizedPosition = getNormalizedPosition(event);
-                deMarkPossibleWays();
-                ArrayPoint move = checkIfMoveIsValid(normalizedPosition);
+                Point normalizedDestination = getNormalizedDestination(event);
+                ChessBoard.deMarkEveryTile();
+                ArrayPoint move = checkIfMoveIsValid(normalizedDestination);
 
 
                 //Move not valid? -> Reset Position and return
                 if (move == null) {
-                    setPosition(locationBeforeDragDrop);
+                    setPosition(currentPositionPX);
                     return;
                 }
 
                 //Rochade
-                if(move.getRochade() != null){
+                if (move.getRochade() != null) {
 
-                    if(move.getRochade() == Rochade.SHORT){
-                        ChessBoard.getInstance().getUiFigures()[7][move.getY()].moveFigure(5, move.getY(), locationBeforeDragDrop);
-                        this.moveFigure(6, move.getY(), locationBeforeDragDrop);
-                    }else{
-                        ChessBoard.getInstance().getUiFigures()[0][move.getY()].moveFigure(3, move.getY(), locationBeforeDragDrop);
-                        this.moveFigure(2, move.getY(), locationBeforeDragDrop);
+                    if (move.getRochade() == Rochade.SHORT) {
+                        ChessBoard.getFigure(7, move.getJ()).moveFigure(5, move.getJ());
+                        this.moveFigure(6, move.getJ());
+                    } else {
+                        ChessBoard.getFigure(0, move.getJ()).moveFigure(3, move.getJ());
+                        this.moveFigure(2, move.getJ());
                     }
                     Game.changePlayer();
-                    System.out.println(ChessBoard.getInstance().toString());
                     return;
 
                 }
 
                 //Normaler Move:
-                this.moveFigure((int)normalizedPosition.getX()/FIGURE_SIZE, (int)normalizedPosition.getY()/FIGURE_SIZE, locationBeforeDragDrop);
-
-                System.out.println(ChessBoard.getInstance().toString());
+                this.moveFigure(move);
             }
         });
     }
 
 
-
-
-    private Point getNormalizedPosition(MouseEvent event) {
+    private Point getNormalizedDestination(MouseEvent event) {
         //Computes the Location of the Mouse realive to the Chessboard
         double x = getLocationRelativeToPane(event).getX() + ((double) FIGURE_SIZE / 2);
         double y = getLocationRelativeToPane(event).getY() + ((double) FIGURE_SIZE / 2);
@@ -202,8 +210,11 @@ public abstract class Figure extends Button {
             //The Figure gets locked and the old Position is set
             if (player == Game.getPlayer()) {
 
+                if(this instanceof King){
+                    ChessBoard.markKingWays(this.getPlayer(), this);
+                }
+
                 locked = true;
-                locationBeforeDragDrop = new Point(getLayoutX(), getLayoutY());
                 toFront();
 
                 markPossibleWays();
@@ -212,6 +223,8 @@ public abstract class Figure extends Button {
 
         });
     }
+
+
 
     //TODO: Move to chessboard
     private Point getLocationRelativeToPane(MouseEvent event) {
@@ -225,7 +238,7 @@ public abstract class Figure extends Button {
 
     private void setDeath() {
 
-        ChessBoard.getInstance().getUiFigures()[(int) (getPrefWidth() / FIGURE_SIZE)][(int) (getPrefHeight() / FIGURE_SIZE)] = null;
+        this.death = true;
 
         if (player == 1) {
             ChessBoard.getInstance().getChildren().remove(this);
@@ -243,7 +256,8 @@ public abstract class Figure extends Button {
     }
 
     protected boolean isTileEmpty(int i, int j) {
-        return ChessBoard.getInstance().getUiFigures()[i][j] == null;
+
+        return ChessBoard.getFigure(i, j) == null;
     }
 
     protected boolean isTileEnemy(int i, int j) {
@@ -252,7 +266,7 @@ public abstract class Figure extends Button {
             return false;
         }
 
-        return ChessBoard.getInstance().getUiFigures()[i][j].player != Game.getPlayer();
+        return ChessBoard.getFigure(i, j).getPlayer() != Game.getPlayer();
 
     }
 
@@ -262,7 +276,7 @@ public abstract class Figure extends Button {
             return false;
         }
 
-        return ChessBoard.getInstance().getUiFigures()[i][j].player == Game.getPlayer();
+        return ChessBoard.getFigure(i, j).getPlayer() == Game.getPlayer();
 
     }
 
@@ -281,18 +295,10 @@ public abstract class Figure extends Button {
 
         for (ArrayPoint p : possibleCoordinatesBeforeMarking) {
 
-            tiles[p.getX()][p.getY()].mark(p.getColorOfTheTile());
+            if(!tiles[p.getI()][p.getJ()].isAlreadyMarked()){
+                tiles[p.getI()][p.getJ()].mark(p.getColorOfTheTile());
+            }
 
-        }
-
-    }
-
-    public void deMarkPossibleWays() {
-
-        ChessBoardTile[][] tiles = ChessBoard.getInstance().getTiles();
-
-        for (ArrayPoint p : possibleCoordinatesBeforeMarking) {
-            tiles[p.getX()][p.getY()].deMark();
         }
 
     }
@@ -300,8 +306,8 @@ public abstract class Figure extends Button {
     public ArrayPoint checkIfMoveIsValid(Point position) {
 
         for (ArrayPoint possibleCoordinate : possibleCoordinatesBeforeMarking) {
-            if (possibleCoordinate.getX() == (int) (position.getX() / FIGURE_SIZE)
-                    && possibleCoordinate.getY() == (int) (position.getY() / FIGURE_SIZE)) {
+            if (possibleCoordinate.getI() == (int) (position.getX() / FIGURE_SIZE)
+                    && possibleCoordinate.getJ() == (int) (position.getY() / FIGURE_SIZE)) {
                 return possibleCoordinate;
             }
         }
@@ -312,11 +318,18 @@ public abstract class Figure extends Button {
     protected void afterSuccessFullMoveAction() {
         Utils.playMusic("/sfx/chess_move.wav", this.getClass());
         figureMoved = true;
-    }
+        ChessBoard.postMoveProcessing(this.player);
 
-    public abstract List<ArrayPoint> getPossibleCoordinates();
+    }
 
     public int getPlayer() {
         return player;
     }
+
+    public boolean isDeath() {
+        return death;
+    }
+
+    public abstract List<ArrayPoint> getPossibleCoordinates();
+
 }

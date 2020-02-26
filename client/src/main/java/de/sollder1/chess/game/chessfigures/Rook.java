@@ -8,7 +8,7 @@ import de.sollder1.chess.game.helpObjects.ArrayPoint;
 
 public class Rook extends Figure {
 
-    public Rook(int size, int itemID, Point position, int player) {
+    public Rook(int itemID, ArrayPoint position, int player) {
 
         super(itemID, position, player);
 
@@ -38,32 +38,31 @@ public class Rook extends Figure {
     public ArrayList<ArrayPoint> getPossibleCoordinates() {
 
         ArrayList<ArrayPoint> posMoves = new ArrayList<>();
-        ArrayPoint position = new ArrayPoint((int) (locationBeforeDragDrop.getX() / FIGURE_SIZE), (int) ((locationBeforeDragDrop.getY() / FIGURE_SIZE)));
 
         //Nach Vorne schauen(schwarz)
-        for (int y = position.getY() + 1; y < 8; y++) {
-            if (!checkForPossibleMove(posMoves, position.getX(), y)) {
+        for (int y = currentPosition.getJ() + 1; y < 8; y++) {
+            if (!checkForPossibleMove(posMoves, currentPosition.getI(), y)) {
                 break;
             }
         }
 
         //Nach hinten schauen(schwarz)
-        for (int y = position.getY() - 1; y >= 0; y--) {
-            if (!checkForPossibleMove(posMoves, position.getX(), y)) {
+        for (int y = currentPosition.getJ() - 1; y >= 0; y--) {
+            if (!checkForPossibleMove(posMoves, currentPosition.getI(), y)) {
                 break;
             }
         }
 
         //Nach links schauen(schwarz)
-        for (int x = position.getX() - 1; x >= 0; x--) {
-            if (!checkForPossibleMove(posMoves, x, position.getY())) {
+        for (int x = currentPosition.getI() - 1; x >= 0; x--) {
+            if (!checkForPossibleMove(posMoves, x, currentPosition.getJ())) {
                 break;
             }
         }
 
         //Nach links schauen(schwarz)
-        for (int x = position.getX() + 1; x < 8; x++) {
-            if (!checkForPossibleMove(posMoves, x, position.getY())) {
+        for (int x = currentPosition.getI() + 1; x < 8; x++) {
+            if (!checkForPossibleMove(posMoves, x, currentPosition.getJ())) {
                 break;
             }
         }

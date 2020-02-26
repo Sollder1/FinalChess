@@ -8,15 +8,20 @@ import de.sollder1.chess.game.chessfigures.Pawn;
 import de.sollder1.chess.game.chessfigures.Queen;
 import de.sollder1.chess.game.chessfigures.Rook;
 import de.sollder1.chess.game.gui.view.GameView;
+import de.sollder1.chess.game.helpObjects.ArrayPoint;
 import de.sollder1.chess.game.helpObjects.Point;
 import javafx.scene.layout.Pane;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Queue;
+import java.util.stream.Collectors;
 
 public class ChessBoard extends Pane {
 
     private int size;
-    private Figure[][] uiFigures = new Figure[8][8];
+    private List<Figure> uiFigures = new ArrayList<>();
     private ChessBoardTile[][] tiles = new ChessBoardTile[8][8];
 
     private static ChessBoard instance;
@@ -66,10 +71,10 @@ public class ChessBoard extends Pane {
             getChildren().add(ncbt);
             tilesOneDimArray[i - 1] = ncbt;
 
-			lightColor = !lightColor;
+            lightColor = !lightColor;
 
             if (i % 8 == 0) {
-				lightColor = !lightColor;
+                lightColor = !lightColor;
             }
         }
 
@@ -89,93 +94,67 @@ public class ChessBoard extends Pane {
 
     public void fillBoardWithFigures() {
 
-        ////Pawns adden(black):
-        //for (int i = 0; i < 8; i++) {
-//
-        //    uiFigures[i][1] = new Pawn(size / 8, i, new Point(i * (size / 8), size / 8), 1);
-        //    getChildren().add(uiFigures[i][1]);
-//
-        //}
-//
-        ////Pawns adden(white):
-        //for (int i = 0; i < 8; i++) {
-//
-        //    uiFigures[i][6] = new Pawn(size / 8, i, new Point(i * (size / 8), 6 * (size / 8)), 2);
-        //    getChildren().add(uiFigures[i][6]);
-//
-        //}
-
-        //Rooks adden(black):
-        uiFigures[0][0] = new Rook(size / 8, 1, new Point(0 * (size / 8), 0 * (size / 8)), 1);
-        getChildren().add(uiFigures[0][0]);
-        uiFigures[7][0] = new Rook(size / 8, 1, new Point(7 * (size / 8), 0 * (size / 8)), 1);
-        getChildren().add(uiFigures[7][0]);
-
-        //Rooks adden(white):
-        uiFigures[0][7] = new Rook(size / 8, 1, new Point(0 * (size / 8), 7 * (size / 8)), 2);
-        getChildren().add(uiFigures[0][7]);
-        uiFigures[7][7] = new Rook(size / 8, 1, new Point(7 * (size / 8), 7 * (size / 8)), 2);
-        getChildren().add(uiFigures[7][7]);
-
-
-        //Bishops adden(black):
-        //uiFigures[2][0] = new Bishop(size / 8, 1, new Point(2 * (size / 8), 0 * (size / 8)), 1);
-        //getChildren().add(uiFigures[2][0]);
-        //uiFigures[5][0] = new Bishop(size / 8, 1, new Point(5 * (size / 8), 0 * (size / 8)), 1);
-        //getChildren().add(uiFigures[5][0]);
-//
-        ////Bishops adden(white):
-        //uiFigures[2][7] = new Bishop(size / 8, 1, new Point(2 * (size / 8), 7 * (size / 8)), 2);
-        //getChildren().add(uiFigures[2][7]);
-        //uiFigures[5][7] = new Bishop(size / 8, 1, new Point(5 * (size / 8), 7 * (size / 8)), 2);
-        //getChildren().add(uiFigures[5][7]);
-//
-//
-        ////Knigths adden(black):
-        //uiFigures[1][0] = new Knight(size / 8, 1, new Point(1 * (size / 8), 0 * (size / 8)), 1);
-        //getChildren().add(uiFigures[1][0]);
-        //uiFigures[6][0] = new Knight(size / 8, 1, new Point(6 * (size / 8), 0 * (size / 8)), 1);
-        //getChildren().add(uiFigures[6][0]);
-//
-        ////Knigths adden(white):
-        //uiFigures[1][7] = new Knight(size / 8, 1, new Point(1 * (size / 8), 7 * (size / 8)), 2);
-        //getChildren().add(uiFigures[1][7]);
-        //uiFigures[6][7] = new Knight(size / 8, 1, new Point(6 * (size / 8), 7 * (size / 8)), 2);
-        //getChildren().add(uiFigures[6][7]);
-//
-//
-        ////Queen adden(black)
-        //uiFigures[3][0] = new Queen(size / 8, 1, new Point(3 * (size / 8), 0 * (size / 8)), 1);
-        //getChildren().add(uiFigures[3][0]);
-
-
-        //Queen adden(white)
-        uiFigures[3][7] = new Queen(size / 8, 1, new Point(3 * (size / 8), 7 * (size / 8)), 2);
-        getChildren().add(uiFigures[3][7]);
-
-
-        //King adden(black)
-        uiFigures[4][0] = new King(size / 8, 1, new Point(4 * (size / 8), 0 * (size / 8)), 1);
-        getChildren().add(uiFigures[4][0]);
-
-
-        //King adden(white)
-        uiFigures[4][7] = new King(size / 8, 1, new Point(4 * (size / 8), 7 * (size / 8)), 2);
-        getChildren().add(uiFigures[4][7]);
-
-    }
-
-    @Override
-    public String toString() {
-
-        for (int i = 0; i< uiFigures.length; i++) {
-            for (int j = 0; j< uiFigures.length; j++) {
-                System.out.print(uiFigures[j][i] == null ? "_null_" + " ; " : uiFigures[j][i] + " ; ");
-            }
-            System.out.println();
+        //Pawns adden(black):
+        for (int i = 0; i < 8; i++) {
+            uiFigures.add(new Pawn(i, new ArrayPoint(i, 1), 1));
+            getChildren().add(getFigure(i, 1));
         }
 
-        return "";
+        //Pawns adden(white):
+        for (int i = 0; i < 8; i++) {
+            uiFigures.add(new Pawn(i, new ArrayPoint(i, 6), 2));
+            getChildren().add(getFigure(i, 6));
+        }
+
+        //Rooks adden(black):
+        uiFigures.add(new Rook(1, new ArrayPoint(0, 0), 1));
+        getChildren().add(getFigure(0, 0));
+        uiFigures.add(new Rook(2, new ArrayPoint(7, 0), 1));
+        getChildren().add(getFigure(7, 0));
+
+        //Rooks adden(white):
+        uiFigures.add(new Rook(1, new ArrayPoint(0, 7), 2));
+        getChildren().add(getFigure(0, 7));
+        uiFigures.add(new Rook(2, new ArrayPoint(7, 7), 2));
+        getChildren().add(getFigure(7, 7));
+
+        //Bishops adden (black):
+        uiFigures.add(new Bishop(1, new ArrayPoint(2, 0), 1));
+        getChildren().add(getFigure(2, 0));
+        uiFigures.add(new Bishop(2, new ArrayPoint(5, 0), 1));
+        getChildren().add(getFigure(5, 0));
+
+        //Bishops adden(white):
+        uiFigures.add(new Bishop(1, new ArrayPoint(2, 7), 2));
+        getChildren().add(getFigure(2, 7));
+        uiFigures.add(new Bishop(2, new ArrayPoint(5, 7), 2));
+        getChildren().add(getFigure(5, 7));
+
+        //Knigths adden(black):
+        uiFigures.add(new Knight(1, new ArrayPoint(1, 0), 1));
+        getChildren().add(getFigure(1, 0));
+        uiFigures.add(new Knight(2, new ArrayPoint(6, 0), 1));
+        getChildren().add(getFigure(6, 0));
+
+        //Knigths adden(white):
+        uiFigures.add(new Knight(1, new ArrayPoint(1, 7), 2));
+        getChildren().add(getFigure(1, 7));
+        uiFigures.add(new Knight(2, new ArrayPoint(6, 7), 2));
+        getChildren().add(getFigure(6, 7));
+
+        //Queen adden(black)
+        uiFigures.add(new Queen(1, new ArrayPoint(3, 0), 1));
+        getChildren().add(getFigure(3, 0));
+        //Queen adden(white)
+        uiFigures.add(new Queen(1, new ArrayPoint(3, 7), 2));
+        getChildren().add(getFigure(3, 7));
+
+        //King adden(black)
+        uiFigures.add(new King(1, new ArrayPoint(4, 0), 1));
+        getChildren().add(getFigure(4, 0));
+        //King adden(white)
+        uiFigures.add(new King(1, new ArrayPoint(4, 7), 2));
+        getChildren().add(getFigure(4, 7));
     }
 
     public static ChessBoard getInstance() {
@@ -186,27 +165,104 @@ public class ChessBoard extends Pane {
         return size;
     }
 
-    public Figure[][] getUiFigures() {
-        return uiFigures;
-    }
-
     public ChessBoardTile[][] getTiles() {
         return tiles;
     }
 
     public static boolean isFigureUnderMe(Point position) {
 
-        Figure underMe = ChessBoard.getInstance().getUiFigures()[(int) (position.getX() / Figure.FIGURE_SIZE)][(int) (position.getY() / Figure.FIGURE_SIZE)];
+        Figure underMe = getFigure(position);
         return underMe != null;
 
     }
 
-    public static Figure getFigureUnderMe(Point position) {
-        return ChessBoard.getInstance().getUiFigures()[(int) (position.getX() / Figure.FIGURE_SIZE)][(int) (position.getY() / Figure.FIGURE_SIZE)];
+    public static Figure getFigure(int i, int j) {
+        return getFigure(new ArrayPoint(i, j));
     }
 
-    public static Figure getFigure(int i, int j){
-        return instance.getUiFigures()[i][j];
+    public static Figure getFigurePx(int x, int y) {
+        return getFigure(new Point(x, y));
     }
+
+
+    public static Figure getFigure(ArrayPoint point) {
+        for (Figure figure : instance.uiFigures) {
+            if (figure.getPosition().equals(point) && !figure.isDeath()) {
+                return figure;
+            }
+        }
+
+        return null;
+    }
+
+    public static Figure getFigure(Point point) {
+        for (Figure figure : instance.uiFigures) {
+            if (figure.getPositionPx().equals(point) && !figure.isDeath()) {
+                return figure;
+            }
+        }
+
+        return null;
+    }
+
+    //Prüfen ob der König im Matt steht.
+    public static void postMoveProcessing(int player) {
+        List<String> dangerousPaths = new ArrayList<>();
+
+        instance.uiFigures.stream().filter(figure -> figure.getPlayer() == player).forEach(
+                figure -> {
+
+                    for (ArrayPoint p : figure.getPossibleCoordinates()) {
+                        if (getFigure(p) instanceof King) {
+                            dangerousPaths.add(p + " " + figure);
+                        }
+                    }
+
+                }
+
+                //figure -> figure.getPossibleCoordinates().stream().filter(point -> getFigure(point) instanceof King).forEach(point -> dangerousPaths.add(point + " " +getFigure(point)))
+        );
+
+        System.out.println(dangerousPaths);
+
+    }
+
+    public static void markKingWays(int player, Figure king) {
+
+        List<ArrayPoint> enemyPaths = new ArrayList<>();
+
+        //TODO: Hier die PAwns filtern und seperat hinzufügen:
+        instance.uiFigures.stream().filter(figure -> figure.getPlayer() != player).forEach(figure -> {
+            enemyPaths.addAll(figure.getPossibleCoordinates().stream().filter(point -> point.getColorOfTheTile().equals("green")).collect(Collectors.toList()));
+        });
+
+        enemyPaths.stream().forEach(path -> {
+            instance.tiles[path.getI()][path.getJ()].mark("yellow");
+        });
+
+        //The King cannot go this paths!
+        List<ArrayPoint> criticalPaths = new ArrayList<>();
+
+        king.getPossibleCoordinates().forEach(kingPath -> {
+            enemyPaths.stream().filter(enemyPath -> enemyPath.equals(kingPath)).forEach(enemyPath -> {
+                instance.tiles[enemyPath.getI()][enemyPath.getJ()].deMark();
+                instance.tiles[enemyPath.getI()][enemyPath.getJ()].mark("orange");
+                criticalPaths.add(enemyPath);
+            });
+        });
+
+        System.out.println(criticalPaths);
+
+    }
+
+    public static void deMarkEveryTile() {
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                instance.tiles[i][j].deMark();
+            }
+        }
+    }
+
+
 
 }
