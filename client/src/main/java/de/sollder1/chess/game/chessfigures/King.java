@@ -7,11 +7,14 @@ import java.util.stream.Collectors;
 import de.sollder1.chess.game.helpObjects.ArrayPoint;
 import de.sollder1.chess.game.helpObjects.Point;
 import de.sollder1.chess.game.helpObjects.Rochade;
+import de.sollder1.chess.game.helpObjects.Utils;
 import de.sollder1.chess.game.playground.ChessBoard;
 import de.sollder1.chess.game.playground.ChessBoardTile;
 
 public class King extends Figure {
 
+
+    private boolean mustMove;
 
     public King(int itemID, ArrayPoint position, int player) {
 
@@ -82,7 +85,7 @@ public class King extends Figure {
         }
     }
 
-    protected List<ArrayPoint> filterCriticalMoves(List<ArrayPoint> posMoves) {
+    public List<ArrayPoint> filterCriticalMoves(List<ArrayPoint> posMoves) {
         List<ArrayPoint> k = ChessBoard.getCriticalPaths(this, ChessBoard.getEnemyPaths(this.player), posMoves);
         return posMoves.stream().filter(move -> {
             for (ArrayPoint criticalMove : k) {
@@ -94,6 +97,19 @@ public class King extends Figure {
         }).collect(Collectors.toList());
     }
 
+    public void mustMoveNextTurn(){
+        mustMove = true;
+    }
+
+    public boolean isMustMove() {
+        return mustMove;
+    }
+
+    @Override
+    protected void afterSuccessFullMoveAction() {
+        super.afterSuccessFullMoveAction();
+        mustMove = false;
+    }
 
     @Override
     public String toString() {

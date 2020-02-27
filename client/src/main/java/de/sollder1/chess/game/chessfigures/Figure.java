@@ -1,10 +1,7 @@
 package de.sollder1.chess.game.chessfigures;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import de.sollder1.chess.game.Game;
 import de.sollder1.chess.game.gui.view.GameView;
 import de.sollder1.chess.game.helpObjects.ArrayPoint;
@@ -27,7 +24,6 @@ public abstract class Figure extends Button {
     protected int itemID;
     protected boolean figureMoved = false;
     private boolean death = false;
-    private boolean mustMove = false;
 
     protected Point currentPositionPX;
     protected ArrayPoint currentPosition;
@@ -214,10 +210,15 @@ public abstract class Figure extends Button {
             //The Figure gets locked and the old Position is set
             if (player == Game.getPlayer()) {
 
+                if(!(this instanceof King) && ChessBoard.isAnKingToMove(player)){
+                    locked = false;
+                    return;
+                }
+
                 if(this instanceof King){
                     ChessBoard.markKingWays(this.getPlayer(), this);
-
                 }
+
 
                 locked = true;
                 toFront();
@@ -230,7 +231,7 @@ public abstract class Figure extends Button {
     }
 
     protected List<ArrayPoint> filterCoordinates(List<ArrayPoint> posMoves) {
-        return posMoves.stream().filter(move -> move.getI() >= 0 && move.getI() < 8 && move.getJ() > 0 && move.getJ() <8)
+        return posMoves.stream().filter(move -> move.getI() >= 0 && move.getI() < 8 && move.getJ() >= 0 && move.getJ() < 8)
                 .collect(Collectors.toList());
     }
 
@@ -261,6 +262,7 @@ public abstract class Figure extends Button {
         setPrefSize(50, 50);
         setStyle(getStyle() + "-fx-background-size: 50px;");
         setDisable(true);
+        ChessBoard.removeFigure(this);
 
     }
 
@@ -275,7 +277,7 @@ public abstract class Figure extends Button {
             return false;
         }
 
-        return ChessBoard.getFigure(i, j).getPlayer() != Game.getPlayer();
+        return ChessBoard.getFigure(i, j).getPlayer() != player;
 
     }
 
@@ -285,7 +287,7 @@ public abstract class Figure extends Button {
             return false;
         }
 
-        return ChessBoard.getFigure(i, j).getPlayer() == Game.getPlayer();
+        return ChessBoard.getFigure(i, j).getPlayer() == player;
 
     }
 
@@ -302,12 +304,6 @@ public abstract class Figure extends Button {
 
         if(this instanceof King){
             possibleCoordinatesBeforeMarking = ((King) this).filterCriticalMoves(possibleCoordinatesBeforeMarking);
-
-            if(possibleCoordinatesBeforeMarking.isEmpty()){
-                //TODO: SPILE VERNÜNFTIG BEENDEN!
-                System.err.println("Das Spiel Endet, König von Spieler " + this.getPlayer() + " ist Schachmatt!");
-            }
-
         }
 
         ChessBoardTile[][] tiles = ChessBoard.getInstance().getTiles();
@@ -347,10 +343,6 @@ public abstract class Figure extends Button {
 
     public boolean isDeath() {
         return death;
-    }
-
-    public void mustMoveNextTurn(){
-        mustMove = true;
     }
 
     public abstract List<ArrayPoint> getPossibleCoordinates();

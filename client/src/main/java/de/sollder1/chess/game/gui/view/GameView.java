@@ -2,6 +2,8 @@ package de.sollder1.chess.game.gui.view;
 
 import de.sollder1.chess.App;
 import de.sollder1.chess.game.Game;
+import de.sollder1.chess.game.gui.ChessClock;
+import de.sollder1.chess.game.gui.TimeStamp;
 import de.sollder1.chess.starter.Starter;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -14,11 +16,13 @@ public class GameView extends Application {
 
     public static final int SIZE = 600;
     public static Pane mainPane; // The mainPane which gets initialized by the FXML-File
+    public Stage mainStage;
 
     @Override
     public void start(Stage mainStage) {
 
         try {
+            this.mainStage = mainStage;
             //FXML File is getting loaded
             FXMLLoader loader = new FXMLLoader(GameView.class.getResource("/gui/game/GameView.fxml"));
             mainPane = loader.load();
@@ -32,8 +36,7 @@ public class GameView extends Application {
             s.getStylesheets().add(getClass().getResource("/themes/standard/mainView.css").toExternalForm());
 
             mainStage.setOnCloseRequest(event -> {
-                Starter.startStarterInstance();
-                Game.stopGameInstance();
+                GameView.close();
                 //Im Multiplaxer eventuell ausloggen.
             });
 
@@ -48,6 +51,13 @@ public class GameView extends Application {
         }
 
     }
+
+    public static void close(){
+        Starter.startStarterInstance();
+        Game.stopGameInstance();
+    }
+
+
 
 
 }

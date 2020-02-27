@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.*?>
 <?import javafx.scene.paint.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.text.*?>
@@ -19,6 +20,19 @@
             </Label>
             <TilePane fx:id="graveyardWhite" layoutX="14.0" layoutY="435.0" prefColumns="4" prefHeight="202.0" prefRows="4" prefWidth="202.0" style="-fx-border-color: black;" />
             <TilePane fx:id="graveyardBlack" layoutX="284.0" layoutY="435.0" prefColumns="4" prefHeight="202.0" prefRows="4" prefWidth="202.0" style="-fx-border-color: black;" />
+            <HBox fx:id="clockContainerWhite" alignment="CENTER" layoutX="15.0" layoutY="390.0" prefHeight="35.0" prefWidth="202.0" />
+            <HBox fx:id="clockContainerBlack" alignment="CENTER" layoutX="284.0" layoutY="390.0" prefHeight="35.0" prefWidth="202.0" />
+            <ParallelCamera />
+            <Label layoutX="56.0" layoutY="350.0" text="Spieler 2: Weiß">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <Label layoutX="314.0" layoutY="350.0" text="Spieler 1: Schwarz">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
          </children>
       </Pane>
       <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="600.0" layoutX="550.0" layoutY="50.0" stroke="BLACK" strokeType="INSIDE" width="600.0" />

@@ -6,6 +6,7 @@ import java.util.List;
 
 import de.sollder1.chess.game.helpObjects.ArrayPoint;
 import de.sollder1.chess.game.helpObjects.Point;
+import de.sollder1.chess.game.helpObjects.Utils;
 
 
 public class Pawn extends Figure {
@@ -80,6 +81,13 @@ public class Pawn extends Figure {
 
     }
 
+    @Override
+    public void afterSuccessFullMoveAction(){
+        if(currentPosition.getJ() == 0 || currentPosition.getJ() == 7){
+            Utils.interchangePawnDialog(this);
+        }
+        super.afterSuccessFullMoveAction();
+    }
 
     @Override
     public String toString() {

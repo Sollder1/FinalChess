@@ -7,7 +7,7 @@
     <groupId>de.sollder1</groupId>
     <artifactId>FinalChess</artifactId>
     <name>The Final Chess</name>
-    <version>0.11</version>
+    <version>0.20</version>
 
     <packaging>pom</packaging>
 

@@ -1,5 +1,6 @@
 package de.sollder1.chess.game.playground;
 
+import de.sollder1.chess.game.Game;
 import de.sollder1.chess.game.chessfigures.Figure;
 import de.sollder1.chess.game.chessfigures.King;
 import de.sollder1.chess.game.chessfigures.Bishop;
@@ -10,6 +11,7 @@ import de.sollder1.chess.game.chessfigures.Rook;
 import de.sollder1.chess.game.gui.view.GameView;
 import de.sollder1.chess.game.helpObjects.ArrayPoint;
 import de.sollder1.chess.game.helpObjects.Point;
+import de.sollder1.chess.game.helpObjects.Utils;
 import javafx.scene.layout.Pane;
 
 import java.util.ArrayList;
@@ -29,7 +31,7 @@ public class ChessBoard extends Pane {
         ChessBoard.instance = new ChessBoard(size);
         instance.fillBoardWithTiles();
         instance.fillBoardWithFigures();
-        System.out.println(instance.toString());
+
         return instance;
     }
 
@@ -51,6 +53,7 @@ public class ChessBoard extends Pane {
         this.size = size;
 
     }
+
 
     //Puts the Tiles on the Chessboard
     public void fillBoardWithTiles() {
@@ -203,6 +206,16 @@ public class ChessBoard extends Pane {
         return null;
     }
 
+    public static void removeFigure(Figure figure) {
+        instance.uiFigures.remove(figure);
+        instance.getChildren().remove(figure);
+    }
+
+    public static void addFigure(Figure figure) {
+        instance.uiFigures.add(figure);
+        instance.getChildren().add(figure);
+    }
+
     //Prüfen ob der König im Matt steht.
     public static void postMoveProcessing(int player) {
         List<Figure> matts = new ArrayList<>();
@@ -235,7 +248,7 @@ public class ChessBoard extends Pane {
         });
 
         //The King cannot go this paths!
-        List<ArrayPoint> criticalPaths =getCriticalPaths(king, enemyPaths);
+        List<ArrayPoint> criticalPaths = getCriticalPaths(king, enemyPaths);
 
         criticalPaths.stream().forEach(enemyPath -> {
             instance.tiles[enemyPath.getI()][enemyPath.getJ()].deMark();
@@ -249,9 +262,9 @@ public class ChessBoard extends Pane {
         List<ArrayPoint> enemyPaths = new ArrayList<>();
 
         instance.uiFigures.stream().filter(figure -> figure.getPlayer() != player).forEach(figure -> {
-            if(figure instanceof Pawn){
-                enemyPaths.addAll( ((Pawn) figure).getKillingCoordinates());
-            }else {
+            if (figure instanceof Pawn) {
+                enemyPaths.addAll(((Pawn) figure).getKillingCoordinates());
+            } else {
                 enemyPaths.addAll(figure.getPossibleCoordinates().stream().filter(point -> point.getColorOfTheTile().equals("green")).collect(Collectors.toList()));
             }
         });
@@ -282,6 +295,28 @@ public class ChessBoard extends Pane {
         }
     }
 
+    public static boolean isAnKingToMove(int player) {
+        return instance.uiFigures.stream().anyMatch(figure -> figure.getPlayer() == player && figure instanceof King && ((King) figure).isMustMove());
+    }
 
+
+    public static boolean gameOver() {
+
+        return instance.uiFigures.stream().filter(figure -> figure instanceof King).anyMatch(figure -> {
+
+            King king = (King) figure;
+
+            List<ArrayPoint> moves = king.filterCriticalMoves(king.getPossibleCoordinates());
+            if (moves.isEmpty() && king.isMustMove()) {
+                System.err.println("Das Spiel Endet, König von Spieler " + king.getPlayer() + " ist Schachmatt!");
+                Utils.showWinDialog(king.getPlayer() == 1 ? 2 : 1, true);
+                return true;
+            }
+            return false;
+
+        });
+
+
+    }
 
 }

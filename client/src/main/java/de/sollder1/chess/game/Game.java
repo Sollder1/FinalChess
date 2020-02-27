@@ -1,6 +1,7 @@
 package de.sollder1.chess.game;
 
 import de.sollder1.chess.game.ai.SimpleAI;
+import de.sollder1.chess.game.gui.ChessClock;
 import de.sollder1.chess.game.gui.view.GameView;
 import de.sollder1.chess.game.helpObjects.GameMode;
 import de.sollder1.chess.game.playground.ChessBoard;
@@ -19,11 +20,13 @@ public class Game {
     //Controlls from the Controller Class mainController.java
     public static Label roundLabel;
     public static TilePane graveyardWhite, graveyardBlack;
+    public static ChessClock whiteClock;
+    public static ChessClock blackClock;
 
     //de.sollder1.oldengine.engine.AI ist derzwit Spieler 2
     private static GameMode currentGameMode = GameMode.SINGLE_PVP;
-
     private static boolean gameInstanceRunning = false;
+    public static GameView gameView;
 
     public static void startGameInstance(GameMode currentGameMode) {
 
@@ -32,9 +35,13 @@ public class Game {
             gameInstanceRunning = true;
 
             Game.currentGameMode = currentGameMode;
-            GameView gameView = new GameView();
+            gameView = new GameView();
             try {
                 gameView.start(new Stage());
+                blackClock.start();
+                whiteClock.start();
+                blackClock.resume();
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -44,16 +51,33 @@ public class Game {
     }
 
     public static void stopGameInstance() {
+        try {
+            player = 1;
+            myPlayer = 1;
+            Game.gameView.stop();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         Game.gameInstanceRunning = false;
 
     }
 
     public static void changePlayer() {
 
+        //Siegbedingung prüfen:
+        if(ChessBoard.gameOver()){
+            gameView.mainStage.close();
+            GameView.close();
+        }
+
+
         if(player == myPlayer) {
 
             player = myPlayer == 1 ? 2 : 1;
             roundLabel.setText("Spieler 2: Weiß");
+
+            blackClock.stop();
+            whiteClock.resume();
 
             if(currentGameMode == GameMode.MULTI){
                 //Sende den Zug (Server liefert zurück ob er erfolgreich war)
@@ -74,6 +98,9 @@ public class Game {
         }else {
             player = myPlayer == 1 ? 1 : 2;
             roundLabel.setText("Spieler 1: Schwarz");
+
+            blackClock.resume();
+            whiteClock.stop();
         }
     }
 
