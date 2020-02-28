@@ -1,4 +1,4 @@
-package de.sollder1.chess.starter.gui;
+package de.sollder1.chess.starter.gui.serverbrowser;
 
 import de.sollder1.chess.connection.SendabelMessages;
 import de.sollder1.chess.connection.Sender;
@@ -9,14 +9,10 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
-import javafx.stage.Popup;
-import javafx.stage.Stage;
 
 import java.net.InetAddress;
 import java.net.URL;

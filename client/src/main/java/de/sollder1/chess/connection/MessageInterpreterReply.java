@@ -1,14 +1,13 @@
 package de.sollder1.chess.connection;
 
-import de.sollder1.chess.starter.gui.GameItem;
-import de.sollder1.chess.starter.gui.ServerSession;
-import de.sollder1.chess.starter.gui.ConnectionColor;
-import de.sollder1.chess.starter.gui.ServerBrowserController;
+import de.sollder1.chess.starter.gui.serverbrowser.GameItem;
+import de.sollder1.chess.starter.gui.serverbrowser.ServerSession;
+import de.sollder1.chess.starter.gui.serverbrowser.ConnectionColor;
+import de.sollder1.chess.starter.gui.serverbrowser.ServerBrowserController;
 import de.sollder1.common.parsing.ParsedMessage;
 import de.sollder1.common.parsing.Parser;
 import de.sollder1.common.util.Logger;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 

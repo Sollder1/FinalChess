@@ -29,36 +29,7 @@ public class King extends Figure {
 
     public List<ArrayPoint> getPossibleCoordinates() {
 
-        List<ArrayPoint> posMoves = new ArrayList<>();
-
-        handleRochadeMoves(posMoves, currentPosition);
-
-        //Mögliche Bewegungen die Performed werden könnten
-        ArrayPoint[] potMoves = {new ArrayPoint(0, 1), new ArrayPoint(0, -1), new ArrayPoint(1, 0), new ArrayPoint(-1, 0),
-                new ArrayPoint(1, 1), new ArrayPoint(1, -1), new ArrayPoint(-1, 1), new ArrayPoint(-1, -1)};
-
-
-        //Hinreichendes Kriterium um zu bestimmen ob
-        // Bewegungen durchgeführt werden können
-        for (int i = 0; i < 8; i++) {
-
-            ArrayPoint destinationToTry = new ArrayPoint(currentPosition.getI() + potMoves[i].getI(), currentPosition.getJ() + potMoves[i].getJ());
-
-            //Wenn Feld leer adden und continue
-            if (isTileEmpty(destinationToTry.getI(), destinationToTry.getJ())) {
-
-                posMoves.add(new ArrayPoint(currentPosition.getI() + potMoves[i].getI(), currentPosition.getJ() + potMoves[i].getJ()));
-
-            } else if (isTileEnemy(destinationToTry.getI(), destinationToTry.getJ())) {
-
-                posMoves.add(new ArrayPoint(currentPosition.getI() + potMoves[i].getI(), currentPosition.getJ() + potMoves[i].getJ(), "red"));
-
-            }
-
-
-        }
-
-        return (filterCoordinates(posMoves));
+        return filterCriticalMoves(getPossibleCoordinatesWithoutFilter());
 
     }
 
@@ -85,8 +56,42 @@ public class King extends Figure {
         }
     }
 
+    public List<ArrayPoint> getPossibleCoordinatesWithoutFilter(){
+
+        List<ArrayPoint> posMoves = new ArrayList<>();
+
+        handleRochadeMoves(posMoves, currentPosition);
+
+        //Mögliche Bewegungen die Performed werden könnten
+        ArrayPoint[] potMoves = {new ArrayPoint(0, 1), new ArrayPoint(0, -1), new ArrayPoint(1, 0), new ArrayPoint(-1, 0),
+                new ArrayPoint(1, 1), new ArrayPoint(1, -1), new ArrayPoint(-1, 1), new ArrayPoint(-1, -1)};
+
+
+        //Hinreichendes Kriterium um zu bestimmen ob
+        // Bewegungen durchgeführt werden können
+        for (int i = 0; i < 8; i++) {
+
+            ArrayPoint destinationToTry = new ArrayPoint(currentPosition.getI() + potMoves[i].getI(), currentPosition.getJ() + potMoves[i].getJ());
+
+            //Wenn Feld leer adden und continue
+            if (isTileEmpty(destinationToTry.getI(), destinationToTry.getJ())) {
+
+                posMoves.add(new ArrayPoint(currentPosition.getI() + potMoves[i].getI(), currentPosition.getJ() + potMoves[i].getJ()));
+
+            } else if (isTileEnemy(destinationToTry.getI(), destinationToTry.getJ())) {
+
+                posMoves.add(new ArrayPoint(currentPosition.getI() + potMoves[i].getI(), currentPosition.getJ() + potMoves[i].getJ(), "red"));
+
+            }
+
+        }
+
+        return filterCoordinates(posMoves);
+
+    }
+
     public List<ArrayPoint> filterCriticalMoves(List<ArrayPoint> posMoves) {
-        List<ArrayPoint> k = ChessBoard.getCriticalPaths(this, ChessBoard.getEnemyPaths(this.player), posMoves);
+        List<ArrayPoint> k = ChessBoard.getCriticalPaths(ChessBoard.getEnemyPaths(this.player, true), posMoves);
         return posMoves.stream().filter(move -> {
             for (ArrayPoint criticalMove : k) {
                 if (criticalMove.equals(move)){

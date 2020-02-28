@@ -1,50 +1,67 @@
 package de.sollder1.chess.game.ai;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
+
 import de.sollder1.chess.game.chessfigures.Figure;
 import de.sollder1.chess.game.helpObjects.ArrayPoint;
 
-public class SimpleAI extends AI{
+public class SimpleAI extends AI {
 
-	private SimpleAI(){}
+    Random random = new Random();
 
-	protected static AI instance;
+    @Override
+    public void performMove(int player, List<Figure> currentState) {
 
-	public static AI getInstance(){
-		if(instance == null){
-			instance = new SimpleAI();
-		}
-		return instance;
-	}
+        List<FigureMoveRelation> possibleMoves = new ArrayList<>();
 
-	@Override
-	public void performMove(int player) {
-		
-		updateList(player);
-		
-		int r1 = (int) (Math.random() * (aiFigures.size()-1));
-		Figure toMove = aiFigures.get(r1);
+        currentState.stream().filter(figure -> figure.getPlayer() == player)
+                .forEach(figure -> figure.getPossibleCoordinates().forEach(move -> possibleMoves.add(new FigureMoveRelation(move, figure))));
 
+        AtomicBoolean couldKill = new AtomicBoolean(false);
 
-		while(toMove.getPossibleCoordinates().isEmpty()) {
-			
-			r1 = (int) (Math.random() * aiFigures.size());
-			toMove = aiFigures.get(r1);
-			
+        //präfereriere Züge, die schlagen
+        possibleMoves.stream().filter(move -> move.getMove().getColorOfTheTile().equals("red")).findAny().ifPresent(figureMoveRelation -> {
+            if (!couldKill.get()) {
+                figureMoveRelation.getFigure().moveFigure(figureMoveRelation.getMove());
+                couldKill.getAndSet(true);
+            }
+        });
+
+        if(!couldKill.get()){
+			FigureMoveRelation relation = possibleMoves.get(random.nextInt(possibleMoves.size()));
+			relation.getFigure().moveFigure(relation.getMove());
 		}
 
-		List<ArrayPoint> posMoves = toMove.getPossibleCoordinates();
-		int r2 = (int) (Math.random() * toMove.getPossibleCoordinates().size());
+    }
 
-		if(posMoves.get(r2).getI() > 7 || posMoves.get(r2).getJ() > 7){
-			System.err.println("Fehelrhafte Implementierung der getPossibleCoordinates Methode!");
-			System.err.println("Von Figur " + toMove);
+    private class FigureMoveRelation {
+        ArrayPoint move;
+        Figure figure;
 
-		}
+        public FigureMoveRelation(ArrayPoint move, Figure figure) {
+            this.move = move;
+            this.figure = figure;
+        }
 
-		//toMove.moveFigure(posMoves.get(r2).getX(), posMoves.get(r2).getY());
-		
-		
-	}
+        public ArrayPoint getMove() {
+            return move;
+        }
+
+        public void setMove(ArrayPoint move) {
+            this.move = move;
+        }
+
+        public Figure getFigure() {
+            return figure;
+        }
+
+        public void setFigure(Figure figure) {
+            this.figure = figure;
+        }
+    }
 
 }

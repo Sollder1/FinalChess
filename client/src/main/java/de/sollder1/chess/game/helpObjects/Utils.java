@@ -4,6 +4,7 @@ import de.sollder1.chess.game.Game;
 import de.sollder1.chess.game.chessfigures.*;
 import de.sollder1.chess.game.gui.view.GameView;
 import de.sollder1.chess.game.playground.ChessBoard;
+import de.sollder1.chess.starter.gui.settings.SettingsPojo;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.media.Media;
@@ -25,8 +26,10 @@ public final class Utils {
     }
 
     public static void showWinDialog(int winner, boolean matt){
-        Game.blackClock.stop();
-        Game.whiteClock.stop();
+        if(SettingsPojo.isUseChessClock()){
+            Game.blackClock.stop();
+            Game.whiteClock.stop();
+        }
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Game Over");
         alert.setHeaderText("Das Spiel ist vorbei");

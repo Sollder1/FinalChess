@@ -42,7 +42,8 @@ public abstract class Figure extends Button {
 
         setBackground(Background.EMPTY);
 
-        this.currentPositionPX = new Point((int) position.getI() * FIGURE_SIZE, (int) position.getJ() * FIGURE_SIZE);;
+        this.currentPositionPX = new Point((int) position.getI() * FIGURE_SIZE, (int) position.getJ() * FIGURE_SIZE);
+
         this.currentPosition = position;
 
         setPrefSize(FIGURE_SIZE, FIGURE_SIZE);
@@ -59,13 +60,27 @@ public abstract class Figure extends Button {
 
     }
 
-    //Erlaubt die Programatische Verschiebung einer Figur.
-    public void moveFigure(int i, int j) {
+
+
+    public void moveFigure(ArrayPoint move) {
+        //Rochade
+        if (move.getRochade() != null) {
+
+            if (move.getRochade() == Rochade.SHORT) {
+                ChessBoard.getFigure(7, move.getJ()).moveFigure(new ArrayPoint(5, move.getJ()));
+                this.moveFigure(new ArrayPoint(6, move.getJ()));
+            } else {
+                ChessBoard.getFigure(0, move.getJ()).moveFigure(new ArrayPoint(3, move.getJ()));
+                this.moveFigure(new ArrayPoint(2, move.getJ()));
+            }
+            return;
+
+        }
 
         Figure underMe;
-        if (ChessBoard.isFigureUnderMe(new Point(i * FIGURE_SIZE, j * FIGURE_SIZE))) {
+        if (ChessBoard.isFigureUnderMe(new Point(move.getI() * FIGURE_SIZE, move.getJ() * FIGURE_SIZE))) {
 
-            underMe = ChessBoard.getFigure(new ArrayPoint(i , j));
+            underMe = ChessBoard.getFigure(move);
             if (underMe.player == Game.getPlayer() || underMe instanceof King) {
                 setPosition(currentPositionPX);
                 return;
@@ -75,16 +90,9 @@ public abstract class Figure extends Button {
 
         }
 
-        setPosition(new Point(i * FIGURE_SIZE, j * FIGURE_SIZE));
+        setPosition(new Point(move.getI() * FIGURE_SIZE, move.getJ() * FIGURE_SIZE));
         afterSuccessFullMoveAction();
 
-        Game.changePlayer();
-
-
-    }
-
-    public void moveFigure(ArrayPoint destination) {
-        moveFigure(destination.getI(), destination.getJ());
     }
 
     //Controlls Drag and Drop
@@ -108,11 +116,11 @@ public abstract class Figure extends Button {
         currentPosition = new ArrayPoint((int) position.getX() / FIGURE_SIZE, (int) position.getY() / FIGURE_SIZE);
     }
 
-    public ArrayPoint getPosition(){
+    public ArrayPoint getPosition() {
         return currentPosition;
     }
 
-    public Point getPositionPx(){
+    public Point getPositionPx() {
         return currentPositionPX;
     }
 
@@ -132,23 +140,9 @@ public abstract class Figure extends Button {
                     return;
                 }
 
-                //Rochade
-                if (move.getRochade() != null) {
-
-                    if (move.getRochade() == Rochade.SHORT) {
-                        ChessBoard.getFigure(7, move.getJ()).moveFigure(5, move.getJ());
-                        this.moveFigure(6, move.getJ());
-                    } else {
-                        ChessBoard.getFigure(0, move.getJ()).moveFigure(3, move.getJ());
-                        this.moveFigure(2, move.getJ());
-                    }
-                    Game.changePlayer();
-                    return;
-
-                }
-
                 //Normaler Move:
                 this.moveFigure(move);
+                Game.changePlayer();
             }
         });
     }
@@ -210,15 +204,10 @@ public abstract class Figure extends Button {
             //The Figure gets locked and the old Position is set
             if (player == Game.getPlayer()) {
 
-                if(!(this instanceof King) && ChessBoard.isAnKingToMove(player)){
+                if (!(this instanceof King) && ChessBoard.isAnKingToMove(player)) {
                     locked = false;
                     return;
                 }
-
-                if(this instanceof King){
-                    ChessBoard.markKingWays(this.getPlayer(), this);
-                }
-
 
                 locked = true;
                 toFront();
@@ -302,15 +291,15 @@ public abstract class Figure extends Button {
 
         possibleCoordinatesBeforeMarking = getPossibleCoordinates();
 
-        if(this instanceof King){
-            possibleCoordinatesBeforeMarking = ((King) this).filterCriticalMoves(possibleCoordinatesBeforeMarking);
+        if (this instanceof King) {
+            ChessBoard.markKingWays(this.getPlayer(), this);
         }
 
         ChessBoardTile[][] tiles = ChessBoard.getInstance().getTiles();
 
         for (ArrayPoint p : possibleCoordinatesBeforeMarking) {
 
-            if(!tiles[p.getI()][p.getJ()].isAlreadyMarked()){
+            if (!tiles[p.getI()][p.getJ()].isAlreadyMarked()) {
                 tiles[p.getI()][p.getJ()].mark(p.getColorOfTheTile());
             }
 
@@ -346,5 +335,6 @@ public abstract class Figure extends Button {
     }
 
     public abstract List<ArrayPoint> getPossibleCoordinates();
+
 
 }

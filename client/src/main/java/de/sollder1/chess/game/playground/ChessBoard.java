@@ -1,6 +1,5 @@
 package de.sollder1.chess.game.playground;
 
-import de.sollder1.chess.game.Game;
 import de.sollder1.chess.game.chessfigures.Figure;
 import de.sollder1.chess.game.chessfigures.King;
 import de.sollder1.chess.game.chessfigures.Bishop;
@@ -12,8 +11,8 @@ import de.sollder1.chess.game.gui.view.GameView;
 import de.sollder1.chess.game.helpObjects.ArrayPoint;
 import de.sollder1.chess.game.helpObjects.Point;
 import de.sollder1.chess.game.helpObjects.Utils;
+import de.sollder1.chess.starter.gui.settings.SettingsPojo;
 import javafx.scene.layout.Pane;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -52,6 +51,10 @@ public class ChessBoard extends Pane {
 
         this.size = size;
 
+    }
+
+    public static List<Figure> getUiFigures() {
+        return instance.uiFigures;
     }
 
 
@@ -222,17 +225,13 @@ public class ChessBoard extends Pane {
 
         instance.uiFigures.stream().filter(figure -> figure.getPlayer() == player).forEach(
                 figure -> {
-
                     for (ArrayPoint p : figure.getPossibleCoordinates()) {
                         if (getFigure(p) instanceof King) {
                             matts.add(figure);
                             ((King) getFigure(p)).mustMoveNextTurn();
                         }
                     }
-
                 }
-
-                //figure -> figure.getPossibleCoordinates().stream().filter(point -> getFigure(point) instanceof King).forEach(point -> matts.add(point + " " +getFigure(point)))
         );
 
         System.out.println(matts);
@@ -241,14 +240,16 @@ public class ChessBoard extends Pane {
 
     public static void markKingWays(int player, Figure king) {
 
-        List<ArrayPoint> enemyPaths = getEnemyPaths(player);
+        List<ArrayPoint> enemyPaths = getEnemyPaths(player, false);
 
-        enemyPaths.stream().forEach(path -> {
-            instance.tiles[path.getI()][path.getJ()].mark("yellow");
-        });
+        if(SettingsPojo.isActivateKingMarkings()){
+            enemyPaths.stream().forEach(path -> {
+                instance.tiles[path.getI()][path.getJ()].mark("yellow");
+            });
+        }
 
         //The King cannot go this paths!
-        List<ArrayPoint> criticalPaths = getCriticalPaths(king, enemyPaths);
+        List<ArrayPoint> criticalPaths = getCriticalPaths(enemyPaths, ((King) (king)).getPossibleCoordinatesWithoutFilter());
 
         criticalPaths.stream().forEach(enemyPath -> {
             instance.tiles[enemyPath.getI()][enemyPath.getJ()].deMark();
@@ -258,11 +259,14 @@ public class ChessBoard extends Pane {
 
     }
 
-    public static List<ArrayPoint> getEnemyPaths(int player) {
+    public static List<ArrayPoint> getEnemyPaths(int player, boolean ignoreKing) {
         List<ArrayPoint> enemyPaths = new ArrayList<>();
 
         instance.uiFigures.stream().filter(figure -> figure.getPlayer() != player).forEach(figure -> {
-            if (figure instanceof Pawn) {
+
+            if(figure instanceof King && ignoreKing) {
+                //
+            }else if (figure instanceof Pawn) {
                 enemyPaths.addAll(((Pawn) figure).getKillingCoordinates());
             } else {
                 enemyPaths.addAll(figure.getPossibleCoordinates().stream().filter(point -> point.getColorOfTheTile().equals("green")).collect(Collectors.toList()));
@@ -272,11 +276,7 @@ public class ChessBoard extends Pane {
         return enemyPaths;
     }
 
-    public static List<ArrayPoint> getCriticalPaths(Figure king, List<ArrayPoint> enemyPaths) {
-        return getCriticalPaths(king, enemyPaths, king.getPossibleCoordinates());
-    }
-
-    public static List<ArrayPoint> getCriticalPaths(Figure king, List<ArrayPoint> enemyPaths, List<ArrayPoint> possibleCoordinates) {
+    public static List<ArrayPoint> getCriticalPaths(List<ArrayPoint> enemyPaths, List<ArrayPoint> possibleCoordinates) {
         List<ArrayPoint> criticalPaths = new ArrayList<>();
 
         possibleCoordinates.forEach(kingPath -> {
@@ -305,8 +305,7 @@ public class ChessBoard extends Pane {
         return instance.uiFigures.stream().filter(figure -> figure instanceof King).anyMatch(figure -> {
 
             King king = (King) figure;
-
-            List<ArrayPoint> moves = king.filterCriticalMoves(king.getPossibleCoordinates());
+            List<ArrayPoint> moves = king.getPossibleCoordinates();
             if (moves.isEmpty() && king.isMustMove()) {
                 System.err.println("Das Spiel Endet, König von Spieler " + king.getPlayer() + " ist Schachmatt!");
                 Utils.showWinDialog(king.getPlayer() == 1 ? 2 : 1, true);
@@ -315,8 +314,5 @@ public class ChessBoard extends Pane {
             return false;
 
         });
-
-
     }
-
 }

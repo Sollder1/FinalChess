@@ -5,6 +5,7 @@ import de.sollder1.chess.game.Game;
 import de.sollder1.chess.game.gui.ChessClock;
 import de.sollder1.chess.game.gui.TimeStamp;
 import de.sollder1.chess.starter.Starter;
+import de.sollder1.chess.starter.gui.settings.SettingsPojo;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -33,7 +34,7 @@ public class GameView extends Application {
 			/*
 			TODO: Code for choosing other Themes
 			*/
-            s.getStylesheets().add(getClass().getResource("/themes/standard/mainView.css").toExternalForm());
+            s.getStylesheets().add(getClass().getResource(SettingsPojo.getCurrentTheme().getPathToCss()).toExternalForm());
 
             mainStage.setOnCloseRequest(event -> {
                 GameView.close();

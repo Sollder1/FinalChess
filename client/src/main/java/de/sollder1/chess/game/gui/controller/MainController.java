@@ -7,6 +7,7 @@ import java.util.ResourceBundle;
 import de.sollder1.chess.game.Game;
 import de.sollder1.chess.game.gui.ChessClock;
 import de.sollder1.chess.game.gui.TimeStamp;
+import de.sollder1.chess.starter.gui.settings.SettingsPojo;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -36,11 +37,12 @@ public class MainController implements Initializable{
 		Game.graveyardBlack = graveyardBlack;
 		Game.graveyardWhite = graveyardWhite;
 
-		Game.whiteClock = new ChessClock(new TimeStamp(5, 0), 2);
-		Game.blackClock = new ChessClock(new TimeStamp(5, 0), 1);
-
-		clockContainerWhite.getChildren().add(Game.whiteClock);
-		clockContainerBlack.getChildren().add(Game.blackClock);
+		if(SettingsPojo.isUseChessClock()){
+			Game.whiteClock = new ChessClock(SettingsPojo.getChessClockTime(), 2);
+			Game.blackClock = new ChessClock(SettingsPojo.getChessClockTime(), 1);
+			clockContainerWhite.getChildren().add(Game.whiteClock);
+			clockContainerBlack.getChildren().add(Game.blackClock);
+		}
 
 	}
 

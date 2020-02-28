@@ -22,6 +22,10 @@ public class TimeStamp {
         this.sec = sec;
     }
 
+    public TimeStamp(TimeStamp chessClockTime) {
+        this(chessClockTime.hour, chessClockTime.min, chessClockTime.sec);
+    }
+
     //Increments the Timestamp by 1 sec.
     public void decrement() {
 
@@ -59,5 +63,31 @@ public class TimeStamp {
 
     public boolean ended() {
         return ended;
+    }
+
+
+    public void setHour(int hour) {
+        this.hour = hour;
+    }
+
+    public void setMin(int min) {
+        this.min = min;
+    }
+
+    public void setSec(int sec) {
+        this.sec = sec;
+    }
+
+    public boolean set(String newValue) {
+        String[] data = newValue.split(":");
+        try{
+            setHour(Integer.parseInt(data[0]));
+            setMin(Integer.parseInt(data[1]));
+            setSec(Integer.parseInt(data[2]));
+            return true;
+        }catch (Exception e){
+            return false;
+        }
+
     }
 }

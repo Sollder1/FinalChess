@@ -1,9 +1,6 @@
 package de.sollder1.chess.connection;
 
-import de.sollder1.chess.starter.gui.ConnectionColor;
-import de.sollder1.chess.starter.gui.ServerBrowserController;
 import de.sollder1.common.parsing.OwnParser;
-import de.sollder1.common.util.Logger;
 
 public class SendabelMessages {
 

@@ -11,9 +11,11 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.Dialog;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -44,19 +46,20 @@ public class StarterView extends Application {
         VBox startPageCenter = new VBox();
 
         Button singlePVPStart = buildMenuButton("Einzelspieler PVP");
-        singlePVPStart.setOnAction( event -> {
+        singlePVPStart.setOnAction(event -> {
             mainStage.close();
             Game.startGameInstance(GameMode.SINGLE_PVP);
         });
 
         Button singleAiStart = buildMenuButton("Einzelspieler KI");
-        singleAiStart.setOnAction( event -> {
+        singleAiStart.setOnAction(event -> {
             mainStage.close();
             Game.startGameInstance(GameMode.SINGLE_AI);
         });
 
         Button multiStart = buildMenuButton("Multiplayer");
-        multiStart.setOnAction( event -> {
+        multiStart.setDisable(true);
+        multiStart.setOnAction(event -> {
 
             FXMLLoader loader = new FXMLLoader(GameView.class.getResource("/gui/starter/serverBrowserView.fxml"));
             try {
@@ -74,9 +77,20 @@ public class StarterView extends Application {
         });
 
         Button settings = buildMenuButton("Einstellungen");
-        settings.setOnAction( event -> {
-            Alert a = new Alert(Alert.AlertType.INFORMATION, "No Settings YET!");
-            a.show();
+        settings.setOnAction(event -> {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/settings/settingsView.fxml"));
+            try {
+                Scene scene = new Scene(loader.load());
+                Stage settingsWindow = new Stage();
+                settingsWindow.initModality(Modality.APPLICATION_MODAL);
+                settingsWindow.setResizable(false);
+                settingsWindow.setScene(scene);
+                settingsWindow.setTitle("Einstellungen");
+                settingsWindow.showAndWait();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         });
 
         startPageCenter.setPadding(new Insets(50));
@@ -97,7 +111,7 @@ public class StarterView extends Application {
         return button;
     }
 
-    public static void externalLaunch(){
+    public static void externalLaunch() {
         launch();
     }
 

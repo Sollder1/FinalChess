@@ -1,10 +1,12 @@
 package de.sollder1.chess.game;
 
+import de.sollder1.chess.game.ai.AI;
 import de.sollder1.chess.game.ai.SimpleAI;
 import de.sollder1.chess.game.gui.ChessClock;
 import de.sollder1.chess.game.gui.view.GameView;
 import de.sollder1.chess.game.helpObjects.GameMode;
 import de.sollder1.chess.game.playground.ChessBoard;
+import de.sollder1.chess.starter.gui.settings.SettingsPojo;
 import javafx.scene.control.Label;
 import javafx.scene.layout.TilePane;
 import javafx.stage.Stage;
@@ -28,6 +30,8 @@ public class Game {
     private static boolean gameInstanceRunning = false;
     public static GameView gameView;
 
+    private static AI ai;
+
     public static void startGameInstance(GameMode currentGameMode) {
 
         if(!gameInstanceRunning){
@@ -38,10 +42,11 @@ public class Game {
             gameView = new GameView();
             try {
                 gameView.start(new Stage());
-                blackClock.start();
-                whiteClock.start();
-                blackClock.resume();
-
+                if(SettingsPojo.isUseChessClock()){
+                    blackClock.start();
+                    whiteClock.start();
+                    blackClock.resume();
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -76,8 +81,10 @@ public class Game {
             player = myPlayer == 1 ? 2 : 1;
             roundLabel.setText("Spieler 2: Weiß");
 
-            blackClock.stop();
-            whiteClock.resume();
+            if(SettingsPojo.isUseChessClock()){
+                blackClock.stop();
+                whiteClock.resume();
+            }
 
             if(currentGameMode == GameMode.MULTI){
                 //Sende den Zug (Server liefert zurück ob er erfolgreich war)
@@ -92,15 +99,21 @@ public class Game {
             }
 
             if(currentGameMode == GameMode.SINGLE_AI){
-                SimpleAI.getInstance().performMove(player);
+                if(ai == null){
+                    ai = AI.getImplementation();
+                }
+                ai.call(player);
             }
 
         }else {
             player = myPlayer == 1 ? 1 : 2;
             roundLabel.setText("Spieler 1: Schwarz");
 
-            blackClock.resume();
-            whiteClock.stop();
+            if(SettingsPojo.isUseChessClock()){
+                blackClock.resume();
+                whiteClock.stop();
+            }
+
         }
     }
 
