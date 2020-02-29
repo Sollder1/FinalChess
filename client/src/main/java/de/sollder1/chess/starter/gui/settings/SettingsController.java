@@ -36,7 +36,7 @@ public class SettingsController implements Initializable {
         themeChoiceBox.getItems().addAll(SettingsPojo.Theme.loadThemes());
         themeChoiceBox.getSelectionModel().select(0);
 
-        aiImplementation.getItems().addAll(SettingsPojo.AiImplementations.SIMPLE_AI);
+        aiImplementation.getItems().addAll(SettingsPojo.AiImplementations.SIMPLE_AI, SettingsPojo.AiImplementations.ADVANCED_AI_4);
         aiImplementation.getSelectionModel().select(0);
 
         activateKingMarkings.selectedProperty().setValue(SettingsPojo.isActivateKingMarkings());

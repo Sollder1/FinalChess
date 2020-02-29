@@ -1,24 +1,20 @@
-package de.sollder1.chess.game.chessfigures;
+package de.sollder1.chess.game.uielements.chessfigures;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import de.sollder1.chess.game.helpObjects.ArrayPoint;
-import de.sollder1.chess.game.helpObjects.Point;
-import de.sollder1.chess.game.helpObjects.Rochade;
-import de.sollder1.chess.game.helpObjects.Utils;
-import de.sollder1.chess.game.playground.ChessBoard;
-import de.sollder1.chess.game.playground.ChessBoardTile;
+import de.sollder1.chess.game.helper.ArrayPoint;
+import de.sollder1.chess.game.helper.FigureHelper;
+import de.sollder1.chess.game.helper.Rochade;
+import de.sollder1.chess.game.uielements.chessboard.ChessBoard;
 
 public class King extends Figure {
 
-
     private boolean mustMove;
 
-    public King(int itemID, ArrayPoint position, int player) {
-
-        super(itemID, position, player);
+    public King(ArrayPoint position, int player) {
+        super(position, player);
 
         if (player == 1) {
             getStyleClass().add("lightKing");
@@ -28,11 +24,8 @@ public class King extends Figure {
     }
 
     public List<ArrayPoint> getPossibleCoordinates() {
-
         return filterCriticalMoves(getPossibleCoordinatesWithoutFilter());
-
     }
-
 
     private void handleRochadeMoves(List<ArrayPoint> posMoves, ArrayPoint position) {
 
@@ -43,14 +36,15 @@ public class King extends Figure {
         //Rochade Prüfen:
         if (ChessBoard.getFigure(0, position.getJ()) instanceof Rook && !ChessBoard.getFigure(0, position.getJ()).figureMoved) {
             //Weg frei?
-            if (isTileEmpty(1, position.getJ()) && isTileEmpty(2, position.getJ()) && isTileEmpty(3, position.getJ())) {
+            if (FigureHelper.isTileEmpty(1, position.getJ()) && FigureHelper.isTileEmpty(2, position.getJ())
+                    && FigureHelper.isTileEmpty(3, position.getJ())) {
                 posMoves.add(new ArrayPoint(0, position.getJ(), "blue", Rochade.LONG));
             }
         }
 
         if (ChessBoard.getFigure(7, position.getJ()) instanceof Rook && !ChessBoard.getFigure(7, position.getJ()).figureMoved) {
             //Weg frei?
-            if (isTileEmpty(5, position.getJ()) && isTileEmpty(6, position.getJ())) {
+            if (FigureHelper.isTileEmpty(5, position.getJ()) && FigureHelper.isTileEmpty(6, position.getJ())) {
                 posMoves.add(new ArrayPoint(7, position.getJ(), "blue", Rochade.SHORT));
             }
         }
@@ -60,7 +54,7 @@ public class King extends Figure {
 
         List<ArrayPoint> posMoves = new ArrayList<>();
 
-        handleRochadeMoves(posMoves, currentPosition);
+        handleRochadeMoves(posMoves, position);
 
         //Mögliche Bewegungen die Performed werden könnten
         ArrayPoint[] potMoves = {new ArrayPoint(0, 1), new ArrayPoint(0, -1), new ArrayPoint(1, 0), new ArrayPoint(-1, 0),
@@ -71,22 +65,22 @@ public class King extends Figure {
         // Bewegungen durchgeführt werden können
         for (int i = 0; i < 8; i++) {
 
-            ArrayPoint destinationToTry = new ArrayPoint(currentPosition.getI() + potMoves[i].getI(), currentPosition.getJ() + potMoves[i].getJ());
+            ArrayPoint destinationToTry = new ArrayPoint(position.getI() + potMoves[i].getI(), position.getJ() + potMoves[i].getJ());
 
             //Wenn Feld leer adden und continue
-            if (isTileEmpty(destinationToTry.getI(), destinationToTry.getJ())) {
+            if (FigureHelper.isTileEmpty(destinationToTry.getI(), destinationToTry.getJ())) {
 
-                posMoves.add(new ArrayPoint(currentPosition.getI() + potMoves[i].getI(), currentPosition.getJ() + potMoves[i].getJ()));
+                posMoves.add(new ArrayPoint(position.getI() + potMoves[i].getI(), position.getJ() + potMoves[i].getJ()));
 
-            } else if (isTileEnemy(destinationToTry.getI(), destinationToTry.getJ())) {
+            } else if (FigureHelper.isTileEnemy(destinationToTry.getI(), destinationToTry.getJ(), player)) {
 
-                posMoves.add(new ArrayPoint(currentPosition.getI() + potMoves[i].getI(), currentPosition.getJ() + potMoves[i].getJ(), "red"));
+                posMoves.add(new ArrayPoint(position.getI() + potMoves[i].getI(), position.getJ() + potMoves[i].getJ(), "red"));
 
             }
 
         }
 
-        return filterCoordinates(posMoves);
+        return FigureHelper.filterInvalidMoves(posMoves);
 
     }
 

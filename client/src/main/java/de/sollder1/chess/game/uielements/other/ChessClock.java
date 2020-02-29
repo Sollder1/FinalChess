@@ -1,11 +1,12 @@
-package de.sollder1.chess.game.gui;
+package de.sollder1.chess.game.uielements.other;
 
 import de.sollder1.chess.game.Game;
-import de.sollder1.chess.game.gui.view.GameView;
-import de.sollder1.chess.game.helpObjects.Utils;
+import de.sollder1.chess.game.gui.GameView;
+import de.sollder1.chess.game.helper.Utils;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.text.Font;
+import javafx.stage.Stage;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -58,7 +59,7 @@ public class ChessClock extends Label {
         System.err.println("Das Spiel endet, Spieler " + (player == 1 ? 2 : 1) + " ist die Zeit ausgegangen!");
         Platform.runLater(() -> {
             Utils.showWinDialog((player == 1 ? 2 : 1), false);
-            Game.gameView.mainStage.close();
+            ((Stage) this.getScene().getWindow()).close();
             GameView.close();
         });
 

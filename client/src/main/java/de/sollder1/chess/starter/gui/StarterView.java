@@ -2,16 +2,14 @@ package de.sollder1.chess.starter.gui;
 
 import de.sollder1.chess.App;
 import de.sollder1.chess.game.Game;
-import de.sollder1.chess.game.gui.view.GameView;
-import de.sollder1.chess.game.helpObjects.GameMode;
+import de.sollder1.chess.game.gui.GameView;
+import de.sollder1.chess.game.helper.GameMode;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.Dialog;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;

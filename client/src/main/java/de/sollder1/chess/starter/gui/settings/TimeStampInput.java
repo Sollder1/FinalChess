@@ -1,12 +1,11 @@
 package de.sollder1.chess.starter.gui.settings;
 
-import de.sollder1.chess.game.gui.TimeStamp;
+import de.sollder1.chess.game.uielements.other.TimeStamp;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TimeStampInput extends HBox {

@@ -4,10 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
-import de.sollder1.chess.game.chessfigures.Figure;
-import de.sollder1.chess.game.helpObjects.ArrayPoint;
+import de.sollder1.chess.game.uielements.chessfigures.Figure;
+import de.sollder1.chess.game.helper.ArrayPoint;
 
 public class SimpleAI extends AI {
 

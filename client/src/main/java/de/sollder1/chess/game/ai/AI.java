@@ -2,8 +2,8 @@ package de.sollder1.chess.game.ai;
 
 
 import de.sollder1.chess.game.Game;
-import de.sollder1.chess.game.chessfigures.Figure;
-import de.sollder1.chess.game.playground.ChessBoard;
+import de.sollder1.chess.game.uielements.chessfigures.Figure;
+import de.sollder1.chess.game.uielements.chessboard.ChessBoard;
 import de.sollder1.chess.starter.gui.settings.SettingsPojo;
 
 import java.util.List;
@@ -13,13 +13,13 @@ public abstract class AI {
     public static AI getImplementation(){
         switch (SettingsPojo.getCurrentAiImplementation()){
             case SIMPLE_AI: return new SimpleAI();
-
+            case ADVANCED_AI_4: return new AdvancedAI(3);
             default: return new SimpleAI();
         }
     }
 
     public void call(int player){
-        performMove(player, ChessBoard.getUiFigures());
+        performMove(player, ChessBoard.getInstance().getUiFigures());
         Game.changePlayer();
     }
 

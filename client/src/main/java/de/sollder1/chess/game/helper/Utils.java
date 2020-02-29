@@ -1,15 +1,13 @@
-package de.sollder1.chess.game.helpObjects;
+package de.sollder1.chess.game.helper;
 
 import de.sollder1.chess.game.Game;
-import de.sollder1.chess.game.chessfigures.*;
-import de.sollder1.chess.game.gui.view.GameView;
-import de.sollder1.chess.game.playground.ChessBoard;
+import de.sollder1.chess.game.uielements.chessfigures.*;
+import de.sollder1.chess.game.uielements.chessboard.ChessBoard;
 import de.sollder1.chess.starter.gui.settings.SettingsPojo;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import javafx.stage.Popup;
 
 import java.io.File;
 
@@ -27,8 +25,8 @@ public final class Utils {
 
     public static void showWinDialog(int winner, boolean matt){
         if(SettingsPojo.isUseChessClock()){
-            Game.blackClock.stop();
-            Game.whiteClock.stop();
+            Game.getBlackClock().stop();
+            Game.getWhiteClock().stop();
         }
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Game Over");
@@ -46,10 +44,10 @@ public final class Utils {
             ChessBoard.removeFigure(origin);
 
             switch (choice){
-                case "Bishop": ChessBoard.addFigure(new Bishop(3, origin.getPosition(), origin.getPlayer()));break;
-                case "Knight": ChessBoard.addFigure(new Knight(3, origin.getPosition(), origin.getPlayer()));break;
-                case "Queen": ChessBoard.addFigure(new Queen(3, origin.getPosition(), origin.getPlayer()));break;
-                case "Rook": ChessBoard.addFigure(new Rook(3, origin.getPosition(), origin.getPlayer()));break;
+                case "Bishop": ChessBoard.addFigure(new Bishop(origin.getPosition(), origin.getPlayer()));break;
+                case "Knight": ChessBoard.addFigure(new Knight(origin.getPosition(), origin.getPlayer()));break;
+                case "Queen": ChessBoard.addFigure(new Queen(origin.getPosition(), origin.getPlayer()));break;
+                case "Rook": ChessBoard.addFigure(new Rook(origin.getPosition(), origin.getPlayer()));break;
             }
         });
 

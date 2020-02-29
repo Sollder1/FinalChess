@@ -1,13 +1,10 @@
 package de.sollder1.chess.starter.gui.settings;
 
-import de.sollder1.chess.game.ai.AI;
-import de.sollder1.chess.game.gui.TimeStamp;
+import de.sollder1.chess.game.uielements.other.TimeStamp;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 //Global statisches Feld
 public class SettingsPojo {
@@ -75,7 +72,7 @@ public class SettingsPojo {
     }
 
     public enum AiImplementations{
-        SIMPLE_AI
+        SIMPLE_AI, ADVANCED_AI_4
     }
 
     public static class Theme{

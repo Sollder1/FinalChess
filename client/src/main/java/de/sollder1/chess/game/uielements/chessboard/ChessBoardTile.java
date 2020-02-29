@@ -1,6 +1,6 @@
-package de.sollder1.chess.game.playground;
+package de.sollder1.chess.game.uielements.chessboard;
 
-import de.sollder1.chess.game.helpObjects.Point;
+import de.sollder1.chess.game.helper.Point;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 

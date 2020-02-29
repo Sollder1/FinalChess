@@ -1,16 +1,16 @@
-package de.sollder1.chess.game.playground;
+package de.sollder1.chess.game.uielements.chessboard;
 
-import de.sollder1.chess.game.chessfigures.Figure;
-import de.sollder1.chess.game.chessfigures.King;
-import de.sollder1.chess.game.chessfigures.Bishop;
-import de.sollder1.chess.game.chessfigures.Knight;
-import de.sollder1.chess.game.chessfigures.Pawn;
-import de.sollder1.chess.game.chessfigures.Queen;
-import de.sollder1.chess.game.chessfigures.Rook;
-import de.sollder1.chess.game.gui.view.GameView;
-import de.sollder1.chess.game.helpObjects.ArrayPoint;
-import de.sollder1.chess.game.helpObjects.Point;
-import de.sollder1.chess.game.helpObjects.Utils;
+import de.sollder1.chess.game.uielements.chessfigures.Figure;
+import de.sollder1.chess.game.uielements.chessfigures.King;
+import de.sollder1.chess.game.uielements.chessfigures.Bishop;
+import de.sollder1.chess.game.uielements.chessfigures.Knight;
+import de.sollder1.chess.game.uielements.chessfigures.Pawn;
+import de.sollder1.chess.game.uielements.chessfigures.Queen;
+import de.sollder1.chess.game.uielements.chessfigures.Rook;
+import de.sollder1.chess.game.gui.GameView;
+import de.sollder1.chess.game.helper.ArrayPoint;
+import de.sollder1.chess.game.helper.Point;
+import de.sollder1.chess.game.helper.Utils;
 import de.sollder1.chess.starter.gui.settings.SettingsPojo;
 import javafx.scene.layout.Pane;
 import java.util.ArrayList;
@@ -25,6 +25,11 @@ public class ChessBoard extends Pane {
 
     private static ChessBoard instance;
 
+    //MAy only be used by Advanced AI!
+    public ChessBoard(List<Figure> uiFigures){
+        this.uiFigures = uiFigures;
+    }
+
     public static ChessBoard initInstance(int size) {
 
         ChessBoard.instance = new ChessBoard(size);
@@ -35,26 +40,20 @@ public class ChessBoard extends Pane {
     }
 
     //Size as var for heigth and width
-    public ChessBoard(int size) {
+    private ChessBoard(int size) {
 
         //outsource to CSS
         setStyle("-fx-background-color: gray");
 
         //Size gets set
         setPrefSize(size, size);
-        setMinSize(Pane.USE_PREF_SIZE, Pane.USE_PREF_SIZE);
-        setMaxSize(Pane.USE_PREF_SIZE, Pane.USE_PREF_SIZE);
 
         //Position in the mainPane (scalable)
-        setLayoutX((GameView.mainPane.getPrefWidth() - size) - 50);
-        setLayoutY((GameView.mainPane.getPrefHeight() - size) / 2);
+        setLayoutX((GameView.getMainFrame().getPrefWidth() - size) - 50);
+        setLayoutY((GameView.getMainFrame().getPrefHeight() - size) / 2);
 
         this.size = size;
 
-    }
-
-    public static List<Figure> getUiFigures() {
-        return instance.uiFigures;
     }
 
 
@@ -100,64 +99,64 @@ public class ChessBoard extends Pane {
 
         //Pawns adden(black):
         for (int i = 0; i < 8; i++) {
-            uiFigures.add(new Pawn(i, new ArrayPoint(i, 1), 1));
+            uiFigures.add(new Pawn(new ArrayPoint(i, 1), 1));
             getChildren().add(getFigure(i, 1));
         }
 
         //Pawns adden(white):
         for (int i = 0; i < 8; i++) {
-            uiFigures.add(new Pawn(i, new ArrayPoint(i, 6), 2));
+            uiFigures.add(new Pawn(new ArrayPoint(i, 6), 2));
             getChildren().add(getFigure(i, 6));
         }
 
         //Rooks adden(black):
-        uiFigures.add(new Rook(1, new ArrayPoint(0, 0), 1));
+        uiFigures.add(new Rook(new ArrayPoint(0, 0), 1));
         getChildren().add(getFigure(0, 0));
-        uiFigures.add(new Rook(2, new ArrayPoint(7, 0), 1));
+        uiFigures.add(new Rook(new ArrayPoint(7, 0), 1));
         getChildren().add(getFigure(7, 0));
 
         //Rooks adden(white):
-        uiFigures.add(new Rook(1, new ArrayPoint(0, 7), 2));
+        uiFigures.add(new Rook(new ArrayPoint(0, 7), 2));
         getChildren().add(getFigure(0, 7));
-        uiFigures.add(new Rook(2, new ArrayPoint(7, 7), 2));
+        uiFigures.add(new Rook(new ArrayPoint(7, 7), 2));
         getChildren().add(getFigure(7, 7));
 
         //Bishops adden (black):
-        uiFigures.add(new Bishop(1, new ArrayPoint(2, 0), 1));
+        uiFigures.add(new Bishop(new ArrayPoint(2, 0), 1));
         getChildren().add(getFigure(2, 0));
-        uiFigures.add(new Bishop(2, new ArrayPoint(5, 0), 1));
+        uiFigures.add(new Bishop(new ArrayPoint(5, 0), 1));
         getChildren().add(getFigure(5, 0));
 
         //Bishops adden(white):
-        uiFigures.add(new Bishop(1, new ArrayPoint(2, 7), 2));
+        uiFigures.add(new Bishop(new ArrayPoint(2, 7), 2));
         getChildren().add(getFigure(2, 7));
-        uiFigures.add(new Bishop(2, new ArrayPoint(5, 7), 2));
+        uiFigures.add(new Bishop(new ArrayPoint(5, 7), 2));
         getChildren().add(getFigure(5, 7));
 
         //Knigths adden(black):
-        uiFigures.add(new Knight(1, new ArrayPoint(1, 0), 1));
+        uiFigures.add(new Knight(new ArrayPoint(1, 0), 1));
         getChildren().add(getFigure(1, 0));
-        uiFigures.add(new Knight(2, new ArrayPoint(6, 0), 1));
+        uiFigures.add(new Knight(new ArrayPoint(6, 0), 1));
         getChildren().add(getFigure(6, 0));
 
         //Knigths adden(white):
-        uiFigures.add(new Knight(1, new ArrayPoint(1, 7), 2));
+        uiFigures.add(new Knight(new ArrayPoint(1, 7), 2));
         getChildren().add(getFigure(1, 7));
-        uiFigures.add(new Knight(2, new ArrayPoint(6, 7), 2));
+        uiFigures.add(new Knight(new ArrayPoint(6, 7), 2));
         getChildren().add(getFigure(6, 7));
 
         //Queen adden(black)
-        uiFigures.add(new Queen(1, new ArrayPoint(3, 0), 1));
+        uiFigures.add(new Queen(new ArrayPoint(3, 0), 1));
         getChildren().add(getFigure(3, 0));
         //Queen adden(white)
-        uiFigures.add(new Queen(1, new ArrayPoint(3, 7), 2));
+        uiFigures.add(new Queen(new ArrayPoint(3, 7), 2));
         getChildren().add(getFigure(3, 7));
 
         //King adden(black)
-        uiFigures.add(new King(1, new ArrayPoint(4, 0), 1));
+        uiFigures.add(new King(new ArrayPoint(4, 0), 1));
         getChildren().add(getFigure(4, 0));
         //King adden(white)
-        uiFigures.add(new King(1, new ArrayPoint(4, 7), 2));
+        uiFigures.add(new King(new ArrayPoint(4, 7), 2));
         getChildren().add(getFigure(4, 7));
     }
 
@@ -171,6 +170,10 @@ public class ChessBoard extends Pane {
 
     public ChessBoardTile[][] getTiles() {
         return tiles;
+    }
+
+    public List<Figure> getUiFigures() {
+        return instance.uiFigures;
     }
 
     public static boolean isFigureUnderMe(Point position) {
@@ -238,7 +241,8 @@ public class ChessBoard extends Pane {
 
     }
 
-    public static void markKingWays(int player, Figure king) {
+    //Not use by Advanced AI!
+    public static void markDangerousPaths(int player, Figure king) {
 
         List<ArrayPoint> enemyPaths = getEnemyPaths(player, false);
 
@@ -286,7 +290,7 @@ public class ChessBoard extends Pane {
         return criticalPaths;
     }
 
-
+    //Not use by Advanced AI!
     public static void deMarkEveryTile() {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {

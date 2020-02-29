@@ -1,4 +1,4 @@
-package de.sollder1.chess.game.helpObjects;
+package de.sollder1.chess.game.helper;
 
 import java.util.Objects;
 

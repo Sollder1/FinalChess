@@ -1,4 +1,4 @@
-package de.sollder1.chess.game.gui;
+package de.sollder1.chess.game.uielements.other;
 
 public class TimeStamp {
 

@@ -1,11 +1,10 @@
 package de.sollder1.chess.game;
 
 import de.sollder1.chess.game.ai.AI;
-import de.sollder1.chess.game.ai.SimpleAI;
-import de.sollder1.chess.game.gui.ChessClock;
-import de.sollder1.chess.game.gui.view.GameView;
-import de.sollder1.chess.game.helpObjects.GameMode;
-import de.sollder1.chess.game.playground.ChessBoard;
+import de.sollder1.chess.game.uielements.other.ChessClock;
+import de.sollder1.chess.game.gui.GameView;
+import de.sollder1.chess.game.helper.GameMode;
+import de.sollder1.chess.game.uielements.chessboard.ChessBoard;
 import de.sollder1.chess.starter.gui.settings.SettingsPojo;
 import javafx.scene.control.Label;
 import javafx.scene.layout.TilePane;
@@ -18,24 +17,20 @@ public class Game {
     private static int player = 1; //Current Player
     private static int myPlayer = 1;
 
-
     //Controlls from the Controller Class mainController.java
-    public static Label roundLabel;
-    public static TilePane graveyardWhite, graveyardBlack;
-    public static ChessClock whiteClock;
-    public static ChessClock blackClock;
+    private static Label roundLabel;
+    private static TilePane graveyardWhite, graveyardBlack;
+    private static ChessClock whiteClock, blackClock;
 
-    //de.sollder1.oldengine.engine.AI ist derzwit Spieler 2
     private static GameMode currentGameMode = GameMode.SINGLE_PVP;
     private static boolean gameInstanceRunning = false;
-    public static GameView gameView;
+    private static GameView gameView;
 
     private static AI ai;
 
     public static void startGameInstance(GameMode currentGameMode) {
 
         if(!gameInstanceRunning){
-
             gameInstanceRunning = true;
 
             Game.currentGameMode = currentGameMode;
@@ -50,8 +45,6 @@ public class Game {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-
         }
     }
 
@@ -71,8 +64,7 @@ public class Game {
 
         //Siegbedingung prüfen:
         if(ChessBoard.gameOver()){
-            gameView.mainStage.close();
-            GameView.close();
+            ((Stage) roundLabel.getScene().getWindow()).close();
         }
 
 
@@ -131,5 +123,49 @@ public class Game {
 
     public static void setMyPlayer(int myPlayer) {
         Game.myPlayer = myPlayer;
+    }
+
+    public static Label getRoundLabel() {
+        return roundLabel;
+    }
+
+    public static void setRoundLabel(Label roundLabel) {
+        Game.roundLabel = roundLabel;
+    }
+
+    public static TilePane getGraveyardWhite() {
+        return graveyardWhite;
+    }
+
+    public static void setGraveyardWhite(TilePane graveyardWhite) {
+        Game.graveyardWhite = graveyardWhite;
+    }
+
+    public static TilePane getGraveyardBlack() {
+        return graveyardBlack;
+    }
+
+    public static void setGraveyardBlack(TilePane graveyardBlack) {
+        Game.graveyardBlack = graveyardBlack;
+    }
+
+    public static ChessClock getWhiteClock() {
+        return whiteClock;
+    }
+
+    public static void setWhiteClock(ChessClock whiteClock) {
+        Game.whiteClock = whiteClock;
+    }
+
+    public static ChessClock getBlackClock() {
+        return blackClock;
+    }
+
+    public static void setBlackClock(ChessClock blackClock) {
+        Game.blackClock = blackClock;
+    }
+
+    public static GameView getGameView() {
+        return gameView;
     }
 }
