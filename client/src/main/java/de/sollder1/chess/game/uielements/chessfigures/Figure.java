@@ -9,7 +9,7 @@ import de.sollder1.chess.game.uielements.chessboard.ChessBoardTile;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 
-public abstract class Figure extends Button {
+public abstract class Figure extends Button implements Cloneable {
 
     public static final int FIGURE_SIZE = GameView.SIZE/8;
 
@@ -23,6 +23,16 @@ public abstract class Figure extends Button {
     protected int player;
     protected int itemID;
     protected boolean figureMoved = false;
+
+
+    public Figure getClone(){
+        try {
+            return (Figure)clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public Figure(ArrayPoint position, int player) {
 
@@ -64,7 +74,7 @@ public abstract class Figure extends Button {
     private void onMousePressedInitializer() {
         setOnMousePressed(event -> {
             if (player == Game.getPlayer()) {
-                if (!(this instanceof King) && ChessBoard.isAnKingToMove(player)) {
+                if (!(this instanceof King) && GameView.board().isAnKingToMove(player)) {
                     locked = false;
                     return;
                 }
@@ -96,7 +106,7 @@ public abstract class Figure extends Button {
 
                 locked = false;
                 Point normalizedDestination = FigureHelper.computeNormalizedDestination(event);
-                ChessBoard.deMarkEveryTile();
+                GameView.board().deMarkEveryTile();
                 ArrayPoint move = checkIfMoveIsValid(normalizedDestination);
 
                 //Normaler Move:
@@ -117,18 +127,18 @@ public abstract class Figure extends Button {
         //Rochade
         if (move.getRochade() != null) {
             if (move.getRochade() == Rochade.SHORT) {
-                ChessBoard.getFigure(7, move.getJ()).moveFigure(new ArrayPoint(5, move.getJ()));
+                GameView.board().getFigure(7, move.getJ()).moveFigure(new ArrayPoint(5, move.getJ()));
                 this.moveFigure(new ArrayPoint(6, move.getJ()));
             } else {
-                ChessBoard.getFigure(0, move.getJ()).moveFigure(new ArrayPoint(3, move.getJ()));
+                GameView.board().getFigure(0, move.getJ()).moveFigure(new ArrayPoint(3, move.getJ()));
                 this.moveFigure(new ArrayPoint(2, move.getJ()));
             }
             this.afterSuccessFullMoveAction();
             return true;
         }
 
-        if (ChessBoard.isFigureUnderMe(new Point(move.getI() * FIGURE_SIZE, move.getJ() * FIGURE_SIZE))) {
-            Figure underMe = ChessBoard.getFigure(move);
+        if (GameView.board().isFigureUnderMe(new Point(move.getI() * FIGURE_SIZE, move.getJ() * FIGURE_SIZE))) {
+            Figure underMe = GameView.board().getFigure(move);
             if (underMe.player == Game.getPlayer() || underMe instanceof King) {
                 setPosition(positionPX);
                 return false;
@@ -146,11 +156,11 @@ public abstract class Figure extends Button {
         this.death = true;
 
         if (player == 1) {
-            ChessBoard.getInstance().getChildren().remove(this);
+            GameView.board().getChildren().remove(this);
             Game.getGraveyardBlack().getChildren().add(this);
 
         } else {
-            ChessBoard.getInstance().getChildren().remove(this);
+            GameView.board().getChildren().remove(this);
             Game.getGraveyardWhite().getChildren().add(this);
         }
 
@@ -158,7 +168,7 @@ public abstract class Figure extends Button {
         setPrefSize(50, 50);
         setStyle(getStyle() + "-fx-background-size: 50px;");
         setDisable(true);
-        ChessBoard.removeFigure(this);
+        GameView.board().removeFigure(this);
 
     }
 
@@ -168,9 +178,9 @@ public abstract class Figure extends Button {
         possibleCoordinatesBeforeMarking = getPossibleCoordinates();
 
         if (this instanceof King) {
-            ChessBoard.markDangerousPaths(this.getPlayer(), this);
+            GameView.board().markDangerousPaths(this.getPlayer(), this);
         }
-        ChessBoardTile[][] tiles = ChessBoard.getInstance().getTiles();
+        ChessBoardTile[][] tiles = GameView.board().getTiles();
 
         for (ArrayPoint p : possibleCoordinatesBeforeMarking) {
             if (!tiles[p.getI()][p.getJ()].isAlreadyMarked()) {
@@ -192,7 +202,7 @@ public abstract class Figure extends Button {
     protected void afterSuccessFullMoveAction() {
         Utils.playMusic("/sfx/chess_move.wav", this.getClass());
         figureMoved = true;
-        ChessBoard.postMoveProcessing(this.player);
+        GameView.board().postMoveProcessing(this.player);
 
     }
 

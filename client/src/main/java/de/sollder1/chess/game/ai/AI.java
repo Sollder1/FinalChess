@@ -2,6 +2,7 @@ package de.sollder1.chess.game.ai;
 
 
 import de.sollder1.chess.game.Game;
+import de.sollder1.chess.game.gui.GameView;
 import de.sollder1.chess.game.uielements.chessfigures.Figure;
 import de.sollder1.chess.game.uielements.chessboard.ChessBoard;
 import de.sollder1.chess.starter.gui.settings.SettingsPojo;
@@ -13,13 +14,13 @@ public abstract class AI {
     public static AI getImplementation(){
         switch (SettingsPojo.getCurrentAiImplementation()){
             case SIMPLE_AI: return new SimpleAI();
-            case ADVANCED_AI_4: return new AdvancedAI(3);
+            case ADVANCED_AI_4: return new AdvancedAI(2);
             default: return new SimpleAI();
         }
     }
 
     public void call(int player){
-        performMove(player, ChessBoard.getInstance().getUiFigures());
+        performMove(player, GameView.board());
         Game.changePlayer();
     }
 
@@ -37,6 +38,6 @@ public abstract class AI {
      * @param player Der KI spieler
      * @param currentState Der aktuelle zustand des Schachbretts
      */
-    protected abstract void performMove(int player, List<Figure> currentState);
+    protected abstract void performMove(int player, ChessBoard currentState);
 
 }

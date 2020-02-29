@@ -63,7 +63,7 @@ public class Game {
     public static void changePlayer() {
 
         //Siegbedingung prüfen:
-        if(ChessBoard.gameOver()){
+        if(GameView.board().gameOver()){
             ((Stage) roundLabel.getScene().getWindow()).close();
         }
 

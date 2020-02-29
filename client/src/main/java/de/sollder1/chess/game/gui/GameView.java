@@ -15,6 +15,7 @@ public class GameView extends Application {
 
     public static final int SIZE = 600;
     private static Pane mainFrame;
+    private static ChessBoard chessBoard;
 
     @Override
     public void start(Stage mainStage) {
@@ -23,7 +24,8 @@ public class GameView extends Application {
             //FXML File is getting loaded
             FXMLLoader loader = new FXMLLoader(GameView.class.getResource("/gui/game/GameView.fxml"));
             mainFrame = loader.load();
-            mainFrame.getChildren().add(ChessBoard.initInstance(SIZE));
+            chessBoard = new ChessBoard();
+            mainFrame.getChildren().add(chessBoard);
 
             Scene s = new Scene(mainFrame);
 
@@ -53,5 +55,9 @@ public class GameView extends Application {
 
     public static Pane getMainFrame() {
         return mainFrame;
+    }
+
+    public static ChessBoard board(){
+        return chessBoard;
     }
 }

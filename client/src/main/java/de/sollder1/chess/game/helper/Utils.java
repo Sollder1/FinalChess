@@ -1,6 +1,7 @@
 package de.sollder1.chess.game.helper;
 
 import de.sollder1.chess.game.Game;
+import de.sollder1.chess.game.gui.GameView;
 import de.sollder1.chess.game.uielements.chessfigures.*;
 import de.sollder1.chess.game.uielements.chessboard.ChessBoard;
 import de.sollder1.chess.starter.gui.settings.SettingsPojo;
@@ -41,13 +42,13 @@ public final class Utils {
     public static void interchangePawnDialog(Pawn origin){
         ChoiceDialog<String> dialog = new ChoiceDialog<>("Bishop", "Bishop", "Knight", "Queen", "Rook");
         dialog.showAndWait().ifPresent(choice ->{
-            ChessBoard.removeFigure(origin);
+            GameView.board().removeFigure(origin);
 
             switch (choice){
-                case "Bishop": ChessBoard.addFigure(new Bishop(origin.getPosition(), origin.getPlayer()));break;
-                case "Knight": ChessBoard.addFigure(new Knight(origin.getPosition(), origin.getPlayer()));break;
-                case "Queen": ChessBoard.addFigure(new Queen(origin.getPosition(), origin.getPlayer()));break;
-                case "Rook": ChessBoard.addFigure(new Rook(origin.getPosition(), origin.getPlayer()));break;
+                case "Bishop": GameView.board().addFigure(new Bishop(origin.getPosition(), origin.getPlayer()));break;
+                case "Knight": GameView.board().addFigure(new Knight(origin.getPosition(), origin.getPlayer()));break;
+                case "Queen": GameView.board().addFigure(new Queen(origin.getPosition(), origin.getPlayer()));break;
+                case "Rook": GameView.board().addFigure(new Rook(origin.getPosition(), origin.getPlayer()));break;
             }
         });
 

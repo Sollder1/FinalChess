@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import de.sollder1.chess.game.gui.GameView;
 import de.sollder1.chess.game.helper.ArrayPoint;
 import de.sollder1.chess.game.helper.FigureHelper;
 import de.sollder1.chess.game.helper.Rochade;
@@ -34,7 +35,7 @@ public class King extends Figure {
         }
 
         //Rochade Prüfen:
-        if (ChessBoard.getFigure(0, position.getJ()) instanceof Rook && !ChessBoard.getFigure(0, position.getJ()).figureMoved) {
+        if (GameView.board().getFigure(0, position.getJ()) instanceof Rook && !GameView.board().getFigure(0, position.getJ()).figureMoved) {
             //Weg frei?
             if (FigureHelper.isTileEmpty(1, position.getJ()) && FigureHelper.isTileEmpty(2, position.getJ())
                     && FigureHelper.isTileEmpty(3, position.getJ())) {
@@ -42,7 +43,7 @@ public class King extends Figure {
             }
         }
 
-        if (ChessBoard.getFigure(7, position.getJ()) instanceof Rook && !ChessBoard.getFigure(7, position.getJ()).figureMoved) {
+        if (GameView.board().getFigure(7, position.getJ()) instanceof Rook && !GameView.board().getFigure(7, position.getJ()).figureMoved) {
             //Weg frei?
             if (FigureHelper.isTileEmpty(5, position.getJ()) && FigureHelper.isTileEmpty(6, position.getJ())) {
                 posMoves.add(new ArrayPoint(7, position.getJ(), "blue", Rochade.SHORT));
@@ -85,7 +86,7 @@ public class King extends Figure {
     }
 
     public List<ArrayPoint> filterCriticalMoves(List<ArrayPoint> posMoves) {
-        List<ArrayPoint> k = ChessBoard.getCriticalPaths(ChessBoard.getEnemyPaths(this.player, true), posMoves);
+        List<ArrayPoint> k = GameView.board().getCriticalPaths(GameView.board().getEnemyPaths(this.player, true), posMoves);
         return posMoves.stream().filter(move -> {
             for (ArrayPoint criticalMove : k) {
                 if (criticalMove.equals(move)){

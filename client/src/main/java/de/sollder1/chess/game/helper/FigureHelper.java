@@ -41,7 +41,7 @@ public final class FigureHelper {
             newY = 0;
         }
 
-        int chessBoardSize = ChessBoard.getInstance().getSize();
+        int chessBoardSize = ChessBoard.SIZE;
 
         if (newX > chessBoardSize - FIGURE_SIZE) {
             newX = (double) (chessBoardSize) - FIGURE_SIZE;
@@ -58,7 +58,7 @@ public final class FigureHelper {
     public static Point getLocationRelativeToPane(MouseEvent event) {
 
         double x = event.getSceneX() - ((GameView.getMainFrame().getPrefWidth() - 100) / 2) - FIGURE_SIZE / 2; //TODO: Skalierbar
-        double y = event.getSceneY() - ((GameView.getMainFrame().getPrefHeight() - ChessBoard.getInstance().getSize()) / 2) - FIGURE_SIZE / 2;
+        double y = event.getSceneY() - ((GameView.getMainFrame().getPrefHeight() - ChessBoard.SIZE) / 2) - FIGURE_SIZE / 2;
 
         return new Point(x, y);
 
@@ -66,7 +66,7 @@ public final class FigureHelper {
 
     public static boolean isTileEmpty(int i, int j) {
 
-        return ChessBoard.getFigure(i, j) == null;
+        return GameView.board().getFigure(i, j) == null;
     }
 
     public static boolean isTileEnemy(int i, int j, int figurePlayer) {
@@ -75,7 +75,7 @@ public final class FigureHelper {
             return false;
         }
 
-        return ChessBoard.getFigure(i, j).getPlayer() != figurePlayer;
+        return GameView.board().getFigure(i, j).getPlayer() != figurePlayer;
 
     }
 
@@ -85,7 +85,7 @@ public final class FigureHelper {
             return false;
         }
 
-        return ChessBoard.getFigure(i, j).getPlayer() == figurePlayer;
+        return GameView.board().getFigure(i, j).getPlayer() == figurePlayer;
 
     }
 

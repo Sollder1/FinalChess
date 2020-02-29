@@ -1,6 +1,7 @@
 package de.sollder1.chess.game.ai;
 
 import de.sollder1.chess.game.helper.ArrayPoint;
+import de.sollder1.chess.game.uielements.chessboard.ChessBoard;
 import de.sollder1.chess.game.uielements.chessfigures.Figure;
 
 import java.util.ArrayList;
@@ -26,22 +27,22 @@ public class AdvancedAI extends AI {
 
 
     @Override
-    protected void performMove(int player, List<Figure> currentState) {
+    protected void performMove(int player, ChessBoard currentState) {
 
-        miniMax(player, depth, currentState);
+        miniMax(player, depth, new ChessBoard(currentState.getUiFigures()));
 
         bestMove.getFigure().moveFigure(bestMove.getMove());
     }
 
     //TODO: Paralleisierung, dazu müssten allerdings für jeden der ersten Züge eine Tiefe Kopie des Chessboard erstellt werden, die auch funktioniert!
 
-    int miniMax(int currentPlayer, int currentDepth, List<Figure> currentState) {
+    int miniMax(int currentPlayer, int currentDepth, ChessBoard currentState) {
 
-        List<FigureMoveRelation> possibleMoves = getPossibleMoves(currentState, currentPlayer);
+        List<FigureMoveRelation> possibleMoves = getPossibleMoves(currentState.getUiFigures(), currentPlayer);
         //TODO: BEstimmen ob der König bewegt werden muss.
 
         if (currentDepth == 0 || possibleMoves.isEmpty()) {
-            return evaluateEndSituation(currentState, player);
+            return evaluateEndSituation(currentState.getUiFigures(), player);
         }
 
         FigureMoveRelation bestMove = null;
@@ -49,18 +50,14 @@ public class AdvancedAI extends AI {
 
         for (FigureMoveRelation possibleMove : possibleMoves) {
 
-            ArrayPoint oldPosition = possibleMove.getFigure().getPosition();
-
-            int moveEvaluation = evaluateMove(currentState, possibleMove, player);
+            int moveEvaluation = evaluateMove(currentState.getUiFigures(), possibleMove, player);
+            ChessBoard stateCopy = new ChessBoard(currentState.getUiFigures());
 
             //Execute Move:
-            possibleMove.getFigure().setInternalPosition(possibleMove.getMove());
+            stateCopy.getFigure(possibleMove.getFigure().getPosition()).moveFigure(possibleMove.getMove());
 
-            int value = (currentPlayer == player ? miniMax(currentPlayer, currentDepth - 1, currentState)
-                    : miniMax(currentPlayer, currentDepth - 1, currentState) * -1) + moveEvaluation;
-
-            //Revert the Move:
-            possibleMove.getFigure().setInternalPosition(oldPosition);
+            int value = (currentPlayer == player ? miniMax(currentPlayer, currentDepth - 1, stateCopy)
+                    : miniMax(currentPlayer, currentDepth - 1, stateCopy) * -1) + moveEvaluation;
 
             if(value > bestValue){
                 bestValue = value;

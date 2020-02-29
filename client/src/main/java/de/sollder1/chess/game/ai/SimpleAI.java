@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import de.sollder1.chess.game.uielements.chessboard.ChessBoard;
 import de.sollder1.chess.game.uielements.chessfigures.Figure;
 import de.sollder1.chess.game.helper.ArrayPoint;
 
@@ -13,11 +14,12 @@ public class SimpleAI extends AI {
     Random random = new Random();
 
     @Override
-    public void performMove(int player, List<Figure> currentState) {
+    public void performMove(int player, ChessBoard currentState) {
 
         List<FigureMoveRelation> possibleMoves = new ArrayList<>();
 
-        currentState.stream().filter(figure -> figure.getPlayer() == player)
+
+        currentState.getUiFigures().stream().filter(figure -> figure.getPlayer() == player)
                 .forEach(figure -> figure.getPossibleCoordinates().forEach(move -> possibleMoves.add(new FigureMoveRelation(move, figure))));
 
         AtomicBoolean couldKill = new AtomicBoolean(false);
