@@ -1,8 +1,6 @@
 package de.sollder1.engine.internals.state;
 
 import de.sollder1.engine.facade.externaltypes.FigureCode;
-import de.sollder1.engine.internals.state.figures.Figure;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,6 +37,8 @@ public class PieceIdCounter {
     public void increment(FigureCode key, Player.Number playerNumber, int number) {
         if(playerNumber == Player.Number.ONE){
             pieceCounterOne.replace(key, pieceCounterOne.get(key) + number);
+        }else {
+            pieceCounterTwo.replace(key, pieceCounterOne.get(key) + number);
         }
     }
 

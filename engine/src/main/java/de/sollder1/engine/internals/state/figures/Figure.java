@@ -1,9 +1,12 @@
 package de.sollder1.engine.internals.state.figures;
 
+import de.sollder1.engine.facade.externaltypes.FigureCode;
 import de.sollder1.engine.facade.externaltypes.coordinate.Coordinate;
-import de.sollder1.engine.facade.externaltypes.coordinate.CoordinateTyped;
+import de.sollder1.engine.facade.externaltypes.coordinate.CoordinateFigureTyped;
 import de.sollder1.engine.internals.state.ChessBoard;
+import de.sollder1.engine.internals.state.FigureId;
 import de.sollder1.engine.internals.state.Player;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -13,15 +16,14 @@ import java.util.Set;
 public abstract class Figure {
 
     private Coordinate figurePosition;
-    private String figureId;
+    private FigureId figureId;
     private ChessBoard board;
     private Player player;
     //Death is implicit, by just removing the Figure from the Board
 
-
     public Figure(Coordinate figurePosition, int pieceId, ChessBoard board, Player player) {
         this.figurePosition = figurePosition;
-        this.figureId = "";
+        this.figureId = new FigureId(pieceId, getFigureCode(), player.getPlayerNumber());
         this.board = board;
         this.player = player;
     }
@@ -31,7 +33,9 @@ public abstract class Figure {
      * also limited by the Context supplied threw player and board.
      * @return An Set of Possible Moves for this Figure.
      */
-    public abstract Set<CoordinateTyped> getPossibleMoves();
+    public abstract Set<CoordinateFigureTyped> getPossibleMoves();
+
+    public abstract FigureCode getFigureCode();
 
     public Coordinate getFigurePosition() {
         return figurePosition;
@@ -41,7 +45,7 @@ public abstract class Figure {
         this.figurePosition = figurePosition;
     }
 
-    public String getFigureId() {
+    public FigureId getFigureId() {
         return figureId;
     }
 
@@ -53,4 +57,16 @@ public abstract class Figure {
         return player;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Figure figure = (Figure) o;
+        return figureId.equals(figure.figureId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(figureId);
+    }
 }

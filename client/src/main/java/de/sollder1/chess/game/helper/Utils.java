@@ -3,7 +3,6 @@ package de.sollder1.chess.game.helper;
 import de.sollder1.chess.game.Game;
 import de.sollder1.chess.game.gui.GameView;
 import de.sollder1.chess.game.uielements.chessfigures.*;
-import de.sollder1.chess.game.uielements.chessboard.ChessBoard;
 import de.sollder1.chess.starter.gui.settings.SettingsPojo;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceDialog;

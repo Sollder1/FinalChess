@@ -1,13 +1,13 @@
 package de.sollder1.engine.facade.frontend;
 
+import de.sollder1.engine.facade.externaltypes.FigureCode;
 import de.sollder1.engine.facade.externaltypes.coordinate.CoordinateFigure;
+import de.sollder1.engine.internals.state.Player;
 import de.sollder1.engine.internals.state.Settings;
 import de.sollder1.engine.internals.updates.Update;
-import de.sollder1.engine.facade.externaltypes.coordinate.FigureCode;
-
 public class GamePvP extends Game{
 
-    public GamePvP(Settings settings, int startingPlayer) {
+    public GamePvP(Settings settings, Player.Number startingPlayer) {
         super(settings, startingPlayer);
     }
 

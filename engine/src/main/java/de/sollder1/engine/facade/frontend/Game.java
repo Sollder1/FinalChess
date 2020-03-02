@@ -1,14 +1,18 @@
 package de.sollder1.engine.facade.frontend;
 
+import de.sollder1.engine.facade.exceptions.NoSuchFigureIdRegisteredException;
 import de.sollder1.engine.facade.externaltypes.FigureCode;
 import de.sollder1.engine.facade.externaltypes.coordinate.CoordinateFigure;
 import de.sollder1.engine.facade.externaltypes.coordinate.CoordinateFigureTyped;
 import de.sollder1.engine.facade.externaltypes.coordinate.CoordinateTyped;
 import de.sollder1.engine.internals.state.ChessBoard;
+import de.sollder1.engine.internals.state.FigureId;
 import de.sollder1.engine.internals.state.Player;
 import de.sollder1.engine.internals.state.Settings;
+import de.sollder1.engine.internals.state.figures.Figure;
 import de.sollder1.engine.internals.updates.Update;
 
+import java.util.Optional;
 import java.util.Set;
 
 public abstract class Game {
@@ -18,13 +22,9 @@ public abstract class Game {
 
     //Optional: Chessclocks (Depends on Settings)
 
-    protected Game(Settings settings, int startingPlayer) {
+    protected Game(Settings settings, Player.Number startingPlayer) {
 
-        if(startingPlayer != 0 && startingPlayer != 1){
-            throw new RuntimeException("This Player Number is not Supported");
-        }
-
-        this.chessBoard = new ChessBoard(this, startingPlayer == 1 ? Player.Number.ONE : Player.Number.TWO);
+        this.chessBoard = new ChessBoard(this, startingPlayer);
         this.settings = settings;
 
     }
@@ -51,18 +51,42 @@ public abstract class Game {
      */
     public abstract Update interchangePawn(String figureId, FigureCode interChange);
 
-    //TODO: IMPLEMENT
-    public Set<CoordinateTyped> getPossibleMovesForFigure() {
-        return null;
+    public Set<CoordinateFigureTyped> getPossibleMovesForFigure(FigureId figureId) throws NoSuchFigureIdRegisteredException {
+
+        Optional<Figure> correspondingFigure = chessBoard.getFigure(figureId);
+
+        if(chessBoard.getFigure(figureId).isPresent()){
+
+            return correspondingFigure.get().getPossibleMoves();
+        }else {
+            throw new NoSuchFigureIdRegisteredException();
+        }
+
     }
 
-    //TODO: IMPLEMENT
-    public Set<CoordinateFigureTyped> getAllPossibleMoves(int playerNumber) {
-        return null;
+    /**
+     * Also Includes the Moves who go threw the Ping and Possible Pawn kill Moves.
+     * The later is because these are hypothetical Moves. One may try to put his King to
+     * such a Position, which would not be permitted!
+     *
+     * To get the Coordiantes a Figure actually can go to in the current State you
+     * may use the {@code getPossibleMovesForFigure} Method.
+     *
+     * @param player
+     * @return
+     */
+    public Set<CoordinateFigureTyped> getAllPossibleMoves(Player.Number player) {
+        return chessBoard.getAllPossibleMoves(player);
     }
 
-    //TODO: IMPLEMENT
-    public Set<CoordinateTyped> getCriticalKingMoves(int playerNumber) {
+    /**
+     * Convenience Function the get the Moves whose are directly dangerous
+     * to the King and are thereby not allowed to be performed.
+     * TODO: Implement!
+     * @param player The Player in Question
+     * @return An Set of Coordinates the King is not allowed to take.
+     */
+    public Set<CoordinateTyped> getCriticalKingMoves(Player.Number player) {
         return null;
     }
 

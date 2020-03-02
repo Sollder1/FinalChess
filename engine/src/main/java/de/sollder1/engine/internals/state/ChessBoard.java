@@ -2,10 +2,13 @@ package de.sollder1.engine.internals.state;
 
 import de.sollder1.engine.facade.externaltypes.FigureCode;
 import de.sollder1.engine.facade.externaltypes.coordinate.Coordinate;
+import de.sollder1.engine.facade.externaltypes.coordinate.CoordinateFigure;
+import de.sollder1.engine.facade.externaltypes.coordinate.CoordinateFigureTyped;
 import de.sollder1.engine.facade.frontend.Game;
 import de.sollder1.engine.internals.state.figures.*;
-import java.util.ArrayList;
-import java.util.List;
+import de.sollder1.engine.internals.updates.Update;
+
+import java.util.*;
 
 public final class ChessBoard {
 
@@ -63,6 +66,40 @@ public final class ChessBoard {
             pieceIdCounter.incrementBoth(FigureCode.PA);
         }
 
+    }
+
+    public Optional<Figure> getFigure(Coordinate position) {
+        //There can only be one at a Certain Position at a certain Time.
+        return figures.stream().filter(figure -> figure.getFigurePosition().equals(position)).findFirst();
+    }
+
+    public Optional<Figure> getFigure(FigureId toSearch) {
+        return figures.stream().filter(figure -> figure.getFigureId().equals(toSearch)).findFirst();
+    }
+
+    public Set<CoordinateFigureTyped> getAllPossibleMoves(Player.Number player) {
+        Set<CoordinateFigureTyped> result = new HashSet<>();
+        figures.stream().filter(figure -> figure.getPlayer().getPlayerNumber() == player)
+                .forEach(figure -> result.addAll(figure.getPossibleMoves()));
+
+        return result;
+    }
+
+    public Update moveFigure(CoordinateFigure move) {
+        //TODO: IMPLEMENTIEREN!
+        return null;
+    }
+
+    //TODO: Not possible the King is Matt OR an Pawn was not Interchanged
+    public boolean changePlayer() {
+
+
+
+        currentPlayer = currentPlayer.getPlayerNumber() == Player.Number.ONE ? playerOne : playerTwo;
+
+        return true;
+
+        //TODO: PostMove Stuff like Move restrictions for the Player who will be an der Reihe after this MEthod.
     }
 
 

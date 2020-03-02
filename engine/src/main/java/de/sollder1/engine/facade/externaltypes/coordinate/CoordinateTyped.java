@@ -1,6 +1,7 @@
 package de.sollder1.engine.facade.externaltypes.coordinate;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public class CoordinateTyped extends Coordinate{
@@ -20,5 +21,20 @@ public class CoordinateTyped extends Coordinate{
 
     public Set<CoordinateType> getTypes() {
         return types;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        CoordinateTyped that = (CoordinateTyped) o;
+        return types.equals(that.types);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), types);
     }
 }

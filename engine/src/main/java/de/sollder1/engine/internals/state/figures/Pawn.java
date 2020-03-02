@@ -1,6 +1,8 @@
 package de.sollder1.engine.internals.state.figures;
 
+import de.sollder1.engine.facade.externaltypes.FigureCode;
 import de.sollder1.engine.facade.externaltypes.coordinate.Coordinate;
+import de.sollder1.engine.facade.externaltypes.coordinate.CoordinateFigureTyped;
 import de.sollder1.engine.facade.externaltypes.coordinate.CoordinateTyped;
 import de.sollder1.engine.internals.state.ChessBoard;
 import de.sollder1.engine.internals.state.Player;
@@ -14,7 +16,13 @@ public class Pawn extends Figure {
     }
 
     @Override
-    public Set<CoordinateTyped> getPossibleMoves() {
+    public Set<CoordinateFigureTyped> getPossibleMoves() {
         return null;
     }
+
+    @Override
+    public FigureCode getFigureCode() {
+        return FigureCode.PA;
+    }
+
 }
