@@ -1,6 +1,6 @@
 package de.sollder1.engine.facade.externaltypes.coordinate;
 
-import de.sollder1.engine.internals.state.FigureId;
+import de.sollder1.engine.internals.state.pojos.FigureId;
 
 import java.util.Objects;
 

@@ -6,9 +6,9 @@ import de.sollder1.engine.facade.externaltypes.coordinate.CoordinateFigure;
 import de.sollder1.engine.facade.externaltypes.coordinate.CoordinateFigureTyped;
 import de.sollder1.engine.facade.externaltypes.coordinate.CoordinateTyped;
 import de.sollder1.engine.internals.state.ChessBoard;
-import de.sollder1.engine.internals.state.FigureId;
-import de.sollder1.engine.internals.state.Player;
-import de.sollder1.engine.internals.state.Settings;
+import de.sollder1.engine.internals.state.pojos.FigureId;
+import de.sollder1.engine.internals.state.pojos.Player;
+import de.sollder1.engine.internals.state.pojos.Settings;
 import de.sollder1.engine.internals.state.figures.Figure;
 import de.sollder1.engine.internals.updates.Update;
 
@@ -38,7 +38,7 @@ public abstract class Game {
      *
      * @return
      */
-    public abstract Update sendMove(CoordinateFigure move);
+    public abstract Update sendMove(CoordinateFigureTyped move);
 
     //public abstract Update getMultiMove();
 
@@ -65,12 +65,10 @@ public abstract class Game {
     }
 
     /**
-     * Also Includes the Moves who go threw the Ping and Possible Pawn kill Moves.
+     * Also Includes the Moves who go threw the King and Possible Pawn kill Moves.
      * The later is because these are hypothetical Moves. One may try to put his King to
      * such a Position, which would not be permitted!
      *
-     * To get the Coordiantes a Figure actually can go to in the current State you
-     * may use the {@code getPossibleMovesForFigure} Method.
      *
      * @param player
      * @return

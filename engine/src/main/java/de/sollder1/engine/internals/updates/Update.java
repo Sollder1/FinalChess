@@ -1,6 +1,6 @@
 package de.sollder1.engine.internals.updates;
 
-import de.sollder1.engine.internals.state.GameState;
+import de.sollder1.engine.internals.state.pojos.GameState;
 
 import java.util.List;
 

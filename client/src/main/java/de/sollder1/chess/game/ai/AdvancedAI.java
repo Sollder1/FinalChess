@@ -25,7 +25,6 @@ public class AdvancedAI extends AI {
 
     }
 
-
     @Override
     protected void performMove(int player, ChessBoard currentState) {
 
@@ -129,5 +128,4 @@ public class AdvancedAI extends AI {
             this.figure = figure;
         }
     }
-
 }

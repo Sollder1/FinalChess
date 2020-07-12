@@ -2,8 +2,8 @@ package de.sollder1.engine.facade;
 
 import de.sollder1.engine.facade.frontend.Game;
 import de.sollder1.engine.facade.frontend.GamePvP;
-import de.sollder1.engine.internals.state.Player;
-import de.sollder1.engine.internals.state.Settings;
+import de.sollder1.engine.internals.state.pojos.Player;
+import de.sollder1.engine.internals.state.pojos.Settings;
 
 public final class EngineFrontend {
 

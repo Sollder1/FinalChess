@@ -1,6 +1,7 @@
-package de.sollder1.engine.internals.state;
+package de.sollder1.engine.internals.state.pojos;
 
 import de.sollder1.engine.facade.externaltypes.coordinate.Coordinate;
+import de.sollder1.engine.internals.state.pojos.FigureId;
 
 import java.util.Map;
 import java.util.Set;

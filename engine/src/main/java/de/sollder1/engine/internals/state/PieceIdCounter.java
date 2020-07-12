@@ -1,7 +1,9 @@
 package de.sollder1.engine.internals.state;
 
 import de.sollder1.engine.facade.externaltypes.FigureCode;
-import java.util.HashMap;
+import de.sollder1.engine.internals.state.pojos.Player;
+
+import java.util.EnumMap;
 import java.util.Map;
 
 public class PieceIdCounter {
@@ -11,8 +13,8 @@ public class PieceIdCounter {
 
     public PieceIdCounter() {
 
-        pieceCounterOne = new HashMap<>();
-        pieceCounterTwo = new HashMap<>();
+        pieceCounterOne = new EnumMap<>(FigureCode.class);
+        pieceCounterTwo = new EnumMap<>(FigureCode.class);
 
         pieceCounterOne.put(FigureCode.PA, 0);
         pieceCounterOne.put(FigureCode.BI, 0);

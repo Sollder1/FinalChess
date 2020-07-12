@@ -23,6 +23,9 @@ public class CoordinateTyped extends Coordinate{
         return types;
     }
 
+    public void addType(CoordinateType type){
+        types.add(type);
+    }
 
     @Override
     public boolean equals(Object o) {

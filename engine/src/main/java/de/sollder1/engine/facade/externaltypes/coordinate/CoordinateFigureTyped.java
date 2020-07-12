@@ -1,6 +1,6 @@
 package de.sollder1.engine.facade.externaltypes.coordinate;
 
-import de.sollder1.engine.internals.state.FigureId;
+import de.sollder1.engine.internals.state.pojos.FigureId;
 import de.sollder1.engine.internals.state.figures.Figure;
 
 import java.util.HashSet;
@@ -47,5 +47,10 @@ public class CoordinateFigureTyped extends CoordinateTyped{
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), figureId);
+    }
+
+    @Override
+    public String toString() {
+        return figureId + " " + getTypes();
     }
 }

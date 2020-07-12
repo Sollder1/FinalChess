@@ -6,6 +6,8 @@ import de.sollder1.engine.facade.externaltypes.coordinate.CoordinateFigure;
 import de.sollder1.engine.facade.externaltypes.coordinate.CoordinateFigureTyped;
 import de.sollder1.engine.facade.frontend.Game;
 import de.sollder1.engine.internals.state.figures.*;
+import de.sollder1.engine.internals.state.pojos.FigureId;
+import de.sollder1.engine.internals.state.pojos.Player;
 import de.sollder1.engine.internals.updates.Update;
 
 import java.util.*;
@@ -26,10 +28,9 @@ public final class ChessBoard {
         playerTwo = new Player(Player.Number.TWO);
         this.currentPlayer = startingPlayer == Player.Number.ONE ? playerOne : playerTwo;
         this.game = game;
-        initFigures();
-
         this.pieceIdCounter = new PieceIdCounter();
 
+        initFigures();
     }
 
     private void initFigures() {
@@ -66,11 +67,25 @@ public final class ChessBoard {
             pieceIdCounter.incrementBoth(FigureCode.PA);
         }
 
+        for (int i = 0; i < 8; i++) {
+            J:
+            for (int j = 0; j < 8; j++) {
+                for (Figure move : figures) {
+                    if (move.getPosition().getI() == j && move.getPosition().getJ() == i) {
+                        System.out.print(" " + move.getFigureId() + " ");
+                        continue J;
+                    }
+                }
+                System.out.print(" _[leer]_ ");
+            }
+            System.out.println();
+        }
+
     }
 
     public Optional<Figure> getFigure(Coordinate position) {
         //There can only be one at a Certain Position at a certain Time.
-        return figures.stream().filter(figure -> figure.getFigurePosition().equals(position)).findFirst();
+        return figures.stream().filter(figure -> figure.getPosition().equals(position)).findFirst();
     }
 
     public Optional<Figure> getFigure(FigureId toSearch) {
@@ -85,22 +100,47 @@ public final class ChessBoard {
         return result;
     }
 
-    public Update moveFigure(CoordinateFigure move) {
+    public Update moveFigure(CoordinateFigureTyped move) {
         //TODO: IMPLEMENTIEREN!
+
+        Optional<Figure> toMove = getFigure(move.getFigureId());
+
+        if (toMove.isPresent() && isMoveValid(move, toMove.get())) {
+            
+        }
+
+        postMoveAction(move);
+        changePlayer();
         return null;
     }
 
-    //TODO: Not possible the King is Matt OR an Pawn was not Interchanged
+    private boolean isMoveValid(CoordinateFigureTyped move, Figure figure) {
+        return figure.getPossibleMoves().contains(move);
+    }
+
+    private void postMoveAction(CoordinateFigureTyped move) {
+        //TODO: IMPLEMENTIEREN!
+        //Hier werden die Filter des Player gesetzt.
+    }
+
+    public boolean isTileEmpty(Coordinate toLook) {
+        return !getFigure(toLook).isPresent();
+    }
+
+    public Optional<Player> getTileOccupation(Coordinate toLook) {
+        if (isTileEmpty(toLook)) {
+            return Optional.empty();
+        } else {
+            return Optional.of(getFigure(toLook).get().getPlayer());
+        }
+    }
+
+    //TODO: Not possible if the King is Matt OR an Pawn was not Interchanged
     public boolean changePlayer() {
-
-
 
         currentPlayer = currentPlayer.getPlayerNumber() == Player.Number.ONE ? playerOne : playerTwo;
 
         return true;
 
-        //TODO: PostMove Stuff like Move restrictions for the Player who will be an der Reihe after this MEthod.
     }
-
-
 }

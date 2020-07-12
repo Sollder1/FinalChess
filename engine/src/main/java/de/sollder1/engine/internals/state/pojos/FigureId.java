@@ -1,4 +1,4 @@
-package de.sollder1.engine.internals.state;
+package de.sollder1.engine.internals.state.pojos;
 
 import de.sollder1.engine.facade.externaltypes.FigureCode;
 
